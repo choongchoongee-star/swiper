@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>스와이프 캣 — 게임 소개 및 설명</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif;
+    color: #23180f; line-height: 1.7; font-size: 10.5pt; margin: 0;
+  }
+  h1 { font-size: 24pt; margin: 0 0 4px; letter-spacing: -0.5px; }
+  h2 {
+    font-size: 13pt; margin: 22px 0 8px; padding-bottom: 5px;
+    border-bottom: 2.5px solid #23180f;
+  }
+  h3 { font-size: 11pt; margin: 14px 0 5px; }
+  p { margin: 0 0 8px; }
+  ul, ol { margin: 0 0 8px; padding-left: 18px; }
+  li { margin-bottom: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 9.5pt; }
+  th, td { border: 1px solid #cbbba9; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #f6ecdf; font-weight: 700; }
+  .cover { border: 3px solid #23180f; border-radius: 14px; padding: 18px 20px; margin-bottom: 8px; }
+  .tagline { font-size: 12pt; font-weight: 700; color: #a76a25; margin: 2px 0 10px; }
+  .meta { font-size: 9.5pt; }
+  .meta b { display: inline-block; width: 76px; }
+  .link { color: #9a5a12; word-break: break-all; }
+  .note { background: #f6ecdf; border-left: 4px solid #d99b4e; padding: 8px 12px; margin: 10px 0; font-size: 9.5pt; }
+  .cols { display: flex; gap: 14px; }
+  .cols > div { flex: 1; }
+  .kbd {
+    display: inline-block; border: 1.5px solid #23180f; border-radius: 5px;
+    padding: 0 6px; font-size: 9pt; font-weight: 700;
+  }
+  footer { margin-top: 22px; font-size: 8.5pt; color: #7a6a5a; border-top: 1px solid #cbbba9; padding-top: 6px; }
+  .pagebreak { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>스와이프 캣</h1>
+  <p class="tagline">어느 길고양이의 일생 — 100장을 넘기는 동안, 전부 운이 정한다.</p>
+  <p class="meta">
+    <b>장르</b> 스와이프 수집형 성장 게임 (모바일 웹)<br>
+    <b>플랫폼</b> HTML5 웹 · 모바일 브라우저 우선, PC 브라우저도 지원<br>
+    <b>플레이</b> <span class="link">https://choongchoongee-star.github.io/swiper/</span><br>
+    <b>소스</b> <span class="link">https://github.com/choongchoongee-star/swiper</span><br>
+    <b>플레이 영상</b> <span class="link">(YouTube 링크)</span>
+  </p>
+</div>
+
+<h2>1. 게임 개요</h2>
+<p>
+  틱톡·인스타그램 릴스를 넘기는 손동작을 그대로 게임의 규칙으로 삼았습니다.
+  화면을 <b>위로 한 번 스와이프할 때마다 길고양이의 하루가 한 장면씩 지나가고</b>,
+  100장을 다 넘기면 그 고양이의 일생이 끝나 엔딩이 나옵니다.
+</p>
+<p>
+  이 게임에는 <b>전략이 없습니다.</b> 잘한 선택도 못한 선택도 없고, 좋은 일과 나쁜 일은 오직 운으로 결정됩니다.
+  플레이어가 할 수 있는 일은 다음 장면을 넘기는 것뿐입니다.
+  길에서 태어난 고양이의 삶이 그렇듯, 이 게임은 <b>통제할 수 없는 것을 견디며 끝까지 가보는 경험</b>을 다룹니다.
+</p>
+
+<h3>핵심 특징</h3>
+<ul>
+  <li><b>한 손, 한 동작</b> — 조작은 위로 스와이프 하나. 지하철에서 한 손으로 플레이할 수 있습니다.</li>
+  <li><b>101종의 사건 카드</b> — 생선을 발견하고, 개에게 쫓기고, 첫눈을 맞습니다. 같은 사건이 다시 나와도 결과 문장이 달라집니다.</li>
+  <li><b>31종의 엔딩과 도감</b> — 어떻게 살았느냐에 따라 엔딩이 갈리고, 만난 엔딩은 도감에 쌓입니다.</li>
+  <li><b>명예의 전당</b> — 오락실처럼 이름을 입력해 점수를 등록합니다.</li>
+  <li><b>설치 없음</b> — 링크를 열면 즉시 시작됩니다. 계정도, 로딩도, 광고도 없습니다.</li>
+</ul>
+
+<h2>2. 게임 방법</h2>
+
+<h3>목표</h3>
+<p>
+  아기 고양이로 시작해 100장의 카드를 넘기며 살아남는 것입니다.
+  체력이 0이 되면 그 자리에서 삶이 끝나고(조기 엔딩), 끝까지 살아남으면 완주 엔딩과 최종 점수를 받습니다.
+</p>
+
+<h3>조작</h3>
+<table>
+  <tr><th style="width:150px">동작</th><th>결과</th></tr>
+  <tr><td>위로 스와이프</td><td>현재 카드를 겪고 다음 카드로 넘어간다 (기본 조작)</td></tr>
+  <tr><td>좌 / 우로 스와이프</td><td>선택지가 있는 카드에서 둘 중 하나를 고른다</td></tr>
+  <tr><td>PC: <span class="kbd">↑</span> <span class="kbd">←</span> <span class="kbd">→</span></td><td>같은 동작을 키보드로도 할 수 있다</td></tr>
+</table>
+<div class="note">
+  <b>선택지는 확률을 바꾸지 않습니다.</b> 「따라간다 / 도망친다」처럼 갈림길이 나와도 두 선택의 결과 확률은 완전히 동일하며,
+  갈라지는 것은 이어지는 문장과 연출뿐입니다. 이 게임에 유리한 선택이란 존재하지 않습니다.
+</div>
+
+<h3>다섯 가지 스탯</h3>
+<table>
+  <tr><th style="width:110px">스탯</th><th>의미</th></tr>
+  <tr><td>❤️ 체력</td><td>0이 되면 즉시 게임 오버. 두 장마다 1씩 자연 감소하므로 계속 먹어야 한다.</td></tr>
+  <tr><td>😊 행복</td><td>사람과 햇볕, 다정한 순간들로 쌓인다.</td></tr>
+  <tr><td>🪶 능력</td><td>사냥과 위기 회피의 성공률을 올린다.</td></tr>
+  <tr><td>😺 동료</td><td>곁을 지켜주는 고양이들. 최악의 결과가 나올 확률을 낮춘다.</td></tr>
+  <tr><td>✨ 경험치</td><td>성장 단계 진입 조건이자 점수의 가장 큰 몫.</td></tr>
+</table>
+
+<h3>결과의 네 단계</h3>
+<p>
+  카드마다 <b>대성공 · 성공 · 실패 · 대실패</b> 중 하나가 나옵니다.
+  기본 확률은 8% / 42% / 35% / 15%이며, 관련 스탯이 높고 성장 단계가 올라갈수록 성공 쪽으로 무게가 옮겨갑니다.
+  다만 마지막까지 대실패 확률이 완전히 사라지지는 않습니다.
+</p>
+<p>
+  나쁜 일에도 대성공이 있습니다. 개에게 쫓기다 완벽하게 따돌리면 오히려 경험치를 얻습니다.
+  위기를 넘긴 경험이 성장이 되는 구조입니다.
+</p>
+
+<h3>성장 단계</h3>
+<p>
+  🐱 아기 고양이 → 🐈 청소년 고양이 → 🐈‍⬛ 성묘 → 👑 전설묘.
+  단계가 오르면 고양이가 커지고, 판정이 안정되며, 화면의 색조가 바뀝니다.
+</p>
+
+<h3>특수 카드</h3>
+<ul>
+  <li>🧶 <b>인생 연장</b> — 남은 카드가 5장 늘어난다 (한 판에 최대 4번까지 등장)</li>
+  <li>🍀 <b>행운의 클로버</b> — 이후 3장 동안 대실패가 나오지 않는다</li>
+  <li>🐈‍⬛ <b>검은 고양이의 시련</b> — 대성공이면 큰 점수, 대실패면 체력이 절반이 된다</li>
+</ul>
+
+<h3>종료 조건</h3>
+<ul>
+  <li><b>완주</b> — 100장(+연장분)을 모두 넘기면 31종의 엔딩 중 하나가 나옵니다. 엔딩은 가장 두드러진 스탯, 총점, 그리고 그 판에서 많이 겪은 사건의 종류로 결정됩니다.</li>
+  <li><b>조기 종료</b> — 체력이 0이 되면 마지막 원인에 따라 굶주림·병·사고·추위 중 하나의 엔딩이 나오고, 점수에 0.7배가 적용됩니다.</li>
+</ul>
+
+<h3>점수와 기록</h3>
+<p>
+  점수는 최종 스탯, 대성공 횟수, 보물 카드로 얻은 보너스, 완주 보너스를 합해 계산합니다.
+  엔딩 화면에서 이름을 입력하면 <b>명예의 전당(상위 10명)</b>에 등록되고, 만난 엔딩은 <b>엔딩 도감</b>에 기록됩니다.
+  기록은 서버가 아닌 브라우저에 저장되므로, 오락실 기계처럼 플레이한 기기 안에 남습니다.
+</p>
+
+<div class="pagebreak"></div>
+
+<h2>3. 실행 방법</h2>
+
+<h3>플레이 (심사용)</h3>
+<p>
+  아래 주소를 열면 <b>설치 없이 즉시 플레이</b>할 수 있습니다. 로그인·결제·별도 라이선스가 필요 없습니다.
+</p>
+<p style="font-size:12pt;font-weight:700" class="link">https://choongchoongee-star.github.io/swiper/</p>
+<ul>
+  <li><b>권장 환경</b> — 스마트폰 브라우저(세로 화면). 화면을 위로 밀어 진행합니다.</li>
+  <li><b>PC에서도 가능</b> — 마우스로 위로 끌거나 방향키(↑ ← →)로 플레이할 수 있습니다.</li>
+  <li><b>홈 화면 추가</b> — 브라우저 메뉴에서 「홈 화면에 추가」를 하면 웹앱처럼 전체 화면으로 실행됩니다.</li>
+</ul>
+
+<h3>로컬에서 실행</h3>
+<p>저장소를 내려받아 직접 실행할 수도 있습니다. 빌드 과정이 없으며 정적 파일 서버 하나면 충분합니다.</p>
+<table>
+  <tr><th style="width:150px">단계</th><th>명령</th></tr>
+  <tr><td>1. 내려받기</td><td><code>git clone https://github.com/choongchoongee-star/swiper.git</code></td></tr>
+  <tr><td>2. 폴더 이동</td><td><code>cd swiper</code></td></tr>
+  <tr><td>3. 서버 실행</td><td><code>python -m http.server 8000</code></td></tr>
+  <tr><td>4. 접속</td><td><code>http://localhost:8000</code></td></tr>
+</table>
+<div class="note">
+  ES 모듈로 작성되어 있어 <b>HTML 파일을 더블클릭해 여는 방식(file://)으로는 동작하지 않습니다.</b>
+  위와 같이 로컬 서버를 통해 열어주세요.
+</div>
+
+<h3>기술 구성</h3>
+<ul>
+  <li><b>순수 HTML + CSS + 바닐라 JavaScript(ES 모듈)</b> — 프레임워크·번들러·외부 라이브러리를 전혀 쓰지 않았습니다.</li>
+  <li><b>모든 그래픽은 코드로 그린 SVG</b> — 외부 이미지·사운드 에셋이 없어 라이선스 문제가 없습니다.</li>
+  <li><b>GitHub Actions로 GitHub Pages에 자동 배포</b>됩니다.</li>
+  <li><b>저장은 localStorage만 사용</b> — 서버가 없고 개인정보를 수집하지 않습니다.</li>
+</ul>
+
+<h3>개발·시연용 옵션</h3>
+<p>
+  주소 뒤에 <code>?cards=20</code>을 붙이면 그 장수만큼만 짧게 한 판을 돌 수 있습니다.
+  테스트와 영상 촬영에 사용합니다. (예: <span class="link">…/swiper/?cards=20</span>)
+</p>
+
+<h2>4. 플레이 영상</h2>
+<p>실제 플레이 화면을 담은 영상입니다.</p>
+<p class="link" style="font-weight:700">(YouTube 링크)</p>
+
+<footer>
+  스와이프 캣 — NAN 2026 (NHN Game × AI 해커톤) 사전 과제 제출물 · 게임 소개 및 설명 문서
+</footer>
+
+</body>
+</html>

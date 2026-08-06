@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>스와이프 캣 — AI 활용 기술 문서</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif;
+    color: #23180f; line-height: 1.7; font-size: 10.5pt; margin: 0;
+  }
+  h1 { font-size: 22pt; margin: 0 0 2px; letter-spacing: -0.5px; }
+  h2 {
+    font-size: 13pt; margin: 20px 0 8px; padding-bottom: 5px;
+    border-bottom: 2.5px solid #23180f;
+  }
+  h3 { font-size: 11pt; margin: 14px 0 5px; }
+  p { margin: 0 0 8px; }
+  ul, ol { margin: 0 0 8px; padding-left: 18px; }
+  li { margin-bottom: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 9.5pt; }
+  th, td { border: 1px solid #cbbba9; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #f6ecdf; font-weight: 700; }
+  code { font-family: Consolas, monospace; font-size: 9pt; background: #f4efe8; padding: 1px 4px; border-radius: 3px; }
+  .head { border: 3px solid #23180f; border-radius: 14px; padding: 16px 20px; margin-bottom: 6px; }
+  .sub { font-size: 10.5pt; color: #a76a25; font-weight: 700; margin: 2px 0 0; }
+  .quote {
+    background: #f6ecdf; border-left: 4px solid #d99b4e;
+    padding: 8px 12px; margin: 6px 0 10px; font-size: 9.5pt;
+  }
+  .note { border: 1.5px dashed #c8a06a; padding: 8px 12px; margin: 10px 0; font-size: 9.5pt; }
+  footer { margin-top: 22px; font-size: 8.5pt; color: #7a6a5a; border-top: 1px solid #cbbba9; padding-top: 6px; }
+  .pagebreak { page-break-before: always; }
+  .link { color: #9a5a12; word-break: break-all; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>AI 활용 기술 문서</h1>
+  <p class="sub">스와이프 캣 — 어느 길고양이의 일생</p>
+  <p style="margin:8px 0 0;font-size:9.5pt">
+    소스: <span class="link">https://github.com/choongchoongee-star/swiper</span><br>
+    플레이: <span class="link">https://choongchoongee-star.github.io/swiper/</span>
+  </p>
+</div>
+
+<h2>1. 사용한 AI 도구</h2>
+<table>
+  <tr><th style="width:150px">도구</th><th style="width:110px">용도</th><th>활용 범위</th></tr>
+  <tr>
+    <td><b>Claude Opus 5</b><br>(Claude Code, Anthropic)</td>
+    <td>기획 · 개발 전반</td>
+    <td>게임 설계서 작성, 전체 소스 코드 구현, 밸런스 시뮬레이션 수행 및 수치 도출,
+        SVG 그래픽 작성, GitHub Pages 배포 구성, 제출 문서 작성</td>
+  </tr>
+  <tr>
+    <td><b>ChatGPT</b><br>(이미지 생성)</td>
+    <td>아트</td>
+    <td>고양이 캐릭터 일러스트 6종(표정별) 생성</td>
+  </tr>
+</table>
+<div class="note">
+  <b>작성자 확인 필요:</b> 이미지 생성에 실제로 사용한 도구명과 모델명(예: ChatGPT / GPT Image, Midjourney 등)을
+  확정해 위 표와 5장의 프롬프트 항목을 최종본에 맞춰 수정해 주세요.
+</div>
+
+<h2>2. 개발 방식 — 사람과 AI의 역할 분담</h2>
+<p>
+  이 프로젝트는 <b>사람이 방향과 판단을 맡고, AI가 구현과 검증을 맡는 방식</b>으로 진행했습니다.
+  코드는 전량 AI가 작성했지만, 무엇을 만들지·무엇을 버릴지는 전부 사람이 결정했습니다.
+</p>
+<table>
+  <tr><th style="width:120px">단계</th><th style="width:180px">사람이 한 일</th><th>AI가 한 일</th></tr>
+  <tr>
+    <td>기획</td>
+    <td>게임 아이디어와 제약 제시, 방향 결정, 잘못 해석한 부분 교정</td>
+    <td>설계서(<code>GAMEDESIGN.md</code>)로 구조화, 확률·스탯·엔딩 체계 제안</td>
+  </tr>
+  <tr>
+    <td>콘텐츠</td>
+    <td>세계관과 톤 결정(고양이 1인칭, 길고양이 정체성 유지)</td>
+    <td>카드 101종과 결과 문장, 엔딩 31종의 이름과 설명 작성</td>
+  </tr>
+  <tr>
+    <td>구현</td>
+    <td>기능 우선순위 결정</td>
+    <td>HTML·CSS·JavaScript 전량 작성, SVG 캐릭터 작화</td>
+  </tr>
+  <tr>
+    <td>밸런싱</td>
+    <td>난이도 목표 승인</td>
+    <td>몬테카를로 시뮬레이션 설계·실행, 수치 도출 및 반영 (3장 참고)</td>
+  </tr>
+  <tr>
+    <td>배포</td>
+    <td>저장소 제공</td>
+    <td>GitHub Actions 워크플로 작성, 배포 실패 원인 진단 및 해결</td>
+  </tr>
+</table>
+
+<h3>AI의 해석을 사람이 되돌린 사례</h3>
+<p>
+  AI가 요구를 확대 해석한 지점들은 사람이 명시적으로 되돌렸습니다. 예를 들어,
+</p>
+<ul>
+  <li>「MBTI처럼 다양한 엔딩」이라는 요구를 AI가 <b>4축 16유형 코드 체계</b>로 구현했으나,
+      의도는 「그만큼 다양한 엔딩 중 하나」였습니다. 사람이 <b>추측하지 말고 물어보라</b>고 지시했고,
+      확인 후 스탯·점수·사건 기반의 31종 체계로 다시 만들었습니다.</li>
+  <li>선택지에 확률 보정을 넣으려던 설계를, <b>「전략이 있으면 안 된다」</b>는 지시에 따라
+      확률이 완전히 동일하고 문장만 갈라지는 구조로 바꿨습니다.</li>
+  <li>「입양」 카드는 길고양이가 반복해서 입양되는 모순이 있어 사람의 지적으로 삭제했습니다.</li>
+</ul>
+
+<div class="pagebreak"></div>
+
+<h2>3. 기술적 활용 — AI를 이용한 밸런스 튜닝</h2>
+<p>
+  이 프로젝트에서 AI를 가장 실질적으로 활용한 부분은 <b>확률 밸런싱</b>입니다.
+  운으로만 진행되는 게임이라 체감 난이도를 사람의 감으로 맞추기 어려웠고, 대신 다음 절차를 반복했습니다.
+</p>
+<ol>
+  <li>AI가 브라우저에서 게임 모듈(<code>deck.js</code>, <code>resolve.js</code>, <code>state.js</code>, <code>endings.js</code>)을
+      직접 <code>import</code>하여 플레이어 없이 게임 루프를 자동 실행</li>
+  <li>한 번에 <b>800~4,000판</b>을 시뮬레이션하고 생존율, 평균 도달 카드 수, 스탯 분포, 점수 분위수, 엔딩 분포를 집계</li>
+  <li>집계 결과를 보고 밸런스 상수(피해 배율·회복 배율·시작 체력·굶주림 주기)와 엔딩 판정 기준을 조정</li>
+  <li>다시 시뮬레이션해 목표치에 수렴할 때까지 반복</li>
+</ol>
+
+<h3>측정과 조정의 실제 기록</h3>
+<table>
+  <tr><th style="width:190px">시점</th><th style="width:90px">생존율</th><th>조치</th></tr>
+  <tr><td>최초 구현</td><td><b>0%</b></td><td>중앙값 23장에서 전멸. 체력 수지가 구조적으로 적자임을 확인</td></tr>
+  <tr><td>계수 스윕(12개 조합)</td><td>33~93%</td><td>피해·회복 배율과 시작 체력을 격자 탐색</td></tr>
+  <tr><td>1차 확정</td><td>70%</td><td>피해 0.55 / 회복 1.5 / 시작 체력 60 / 굶주림 2장당 1</td></tr>
+  <tr><td>카드 101종으로 확장 후</td><td>83%</td><td>새 카드가 후해져 난이도 하락 → 재조정</td></tr>
+  <tr><td><b>최종</b></td><td><b>61~63%</b></td><td>피해 0.66 / 회복 1.34. 죽음이 실제 위협으로 남는 수준</td></tr>
+</table>
+
+<h3>엔딩 분포 검증</h3>
+<p>
+  엔딩 31종이 <b>전부 도달 가능한지</b>, 특정 엔딩이 독점하지 않는지도 같은 방식으로 확인했습니다.
+  초기에는 4종이 전체의 93%를 차지했고 11종만 도달 가능했습니다.
+  각 조건의 실제 분포(백분위수)를 측정해 임계값을 다시 잡은 뒤, 4,000판 기준
+  <b>31종 전부 도달 가능</b>하며 최다 17%, 최소 0.2%로 분포하도록 조정했습니다.
+</p>
+
+<h3>구조 설명</h3>
+<ul>
+  <li><b>카드 데이터와 밸런스 수치의 분리</b> — 카드에 적힌 숫자는 서사의 크기(가시에 찔림 −3, 차 사고 −20)를 뜻하고,
+      체감 난이도는 <code>state.js</code>의 계수 네 개로 조절합니다. 문장을 건드리지 않고 난이도만 바꿀 수 있습니다.</li>
+  <li><b>판정 로직의 독립</b> — <code>resolve.js</code>는 스탯과 성장 단계만 보고 확률을 계산합니다.
+      선택지는 이 함수에 아무 영향을 주지 않으므로 「전략 없음」이 구조적으로 보장됩니다.</li>
+  <li><b>비복원 추출 덱</b> — 좋은 일·나쁜 일 75종을 한 바퀴 다 쓰기 전에는 같은 사건이 재등장하지 않습니다.
+      대성공·대실패는 문장을 복수로 두어 재등장 시 다른 문장을 씁니다.</li>
+</ul>
+
+<h2>4. 주요 프롬프트 및 지시 사항</h2>
+<p>실제 개발 과정에서 결과물의 방향을 결정한 지시들입니다.</p>
+<table>
+  <tr><th style="width:120px">목적</th><th>지시 내용(요약)</th></tr>
+  <tr><td>게임 구상</td><td>“화면을 인스타처럼 스와이프해서 위로 올리면서 진행하는 수집형 게임. 고양이를 성장시키는 게임이고,
+    아기 고양이로 시작해 좋은 일과 안 좋은 일을 모두 겪으며 성장한다. 100회 스와이프하면 게임이 끝난다.”</td></tr>
+  <tr><td>핵심 규칙</td><td>“결과는 그냥 무조건 운빨로 정해지게 해놔. <b>전략이 있으면 안 돼.</b>”</td></tr>
+  <tr><td>텍스트 톤</td><td>“카드 텍스트는 고양이 1인칭으로.”</td></tr>
+  <tr><td>콘텐츠 확장</td><td>“카드 종류를 100종 정도로 늘려줘. 일상적인 건 여러 번 나와도 되는데,
+    <b>대성공·대실패는 다른 종류의 멘트로</b> 나와야 한다.”</td></tr>
+  <tr><td>세계관 정합성</td><td>“입양되었다 카드는 빼줘. 여러 번 입양되니까 이상하고, 결국 길고양이가 메인이니까.”</td></tr>
+  <tr><td>작업 방식</td><td>“<b>짐작하지 말고 나한테 물어봐줘.</b>” — 요구가 모호할 때 임의 해석 대신 질문하도록 지시</td></tr>
+  <tr><td>아트 방향</td><td>“고양이 카툰 디자인이 별로다. 참고 이미지처럼 <b>펜그림으로 그린 듯한 디자인</b>으로.”</td></tr>
+  <tr><td>밸런싱</td><td>“시뮬레이션으로 생존율과 엔딩 분포를 측정하고, 목표치에 맞을 때까지 상수를 조정하라.”</td></tr>
+</table>
+
+<h3>이미지 생성에 사용한 프롬프트</h3>
+<p>기준이 되는 한 장을 먼저 만들고, 같은 대화에서 표정만 바꿔 5장을 추가로 생성했습니다.</p>
+<div class="quote">
+  귀여운 주황색 줄무늬 길고양이 캐릭터 일러스트. 손으로 그린 듯한 굵고 균일한 검정 펜선 아웃라인,
+  납작한 파스텔 채색, 음영과 그라데이션 없음. 앞발을 앞으로 모으고 꼬리를 몸에 감은 식빵 자세, 정면을 보고 있음.
+  점처럼 작고 단순한 눈, 작은 분홍 코, 옅은 볼터치, 짧은 수염. 흰색 앞발과 흰 배.
+  배경은 완전 투명. 정사각형 구도, 캐릭터가 화면 중앙에 꽉 차게. 스티커 같은 깔끔한 스타일.
+</div>
+<div class="quote">
+  방금 그 고양이와 완전히 똑같은 자세·색·선 굵기로, 표정만 바꿔서 그려줘:
+  (1) 기분 좋아 눈을 ^^ 모양으로 감고 웃는 얼굴 (2) 아주 우쭐하고 자랑스러운 얼굴, 입을 벌리고 활짝 웃음
+  (3) 시무룩하고 눈물이 살짝 맺힌 얼굴 (4) 깜짝 놀라 눈이 커지고 입을 벌린 얼굴
+  (5) 다쳐서 눈이 X자, 머리에 반창고를 붙인 얼굴
+</div>
+
+<h2>5. 외부 에셋 및 오픈소스 출처</h2>
+<table>
+  <tr><th style="width:150px">항목</th><th>출처 및 라이선스</th></tr>
+  <tr><td>자바스크립트 라이브러리</td><td><b>없음.</b> 프레임워크·번들러 없이 바닐라 ES 모듈로만 구현</td></tr>
+  <tr><td>고양이 캐릭터 이미지</td><td><b>본 프로젝트에서 AI로 직접 생성</b> (1장 참조). 타인의 저작물을 사용하지 않음</td></tr>
+  <tr><td>그 외 그래픽</td><td><b>전부 자체 제작 SVG.</b> 아이콘·배경·연출 요소를 코드로 직접 작성</td></tr>
+  <tr><td>이모지</td><td>사용자 단말의 시스템 폰트를 그대로 사용 (별도 에셋 포함 없음)</td></tr>
+  <tr><td>글꼴</td><td>시스템 기본 글꼴 지정만 사용. 웹폰트 파일을 배포하지 않음</td></tr>
+  <tr><td>사운드</td><td>사용하지 않음</td></tr>
+  <tr><td>서버 · 외부 API</td><td>사용하지 않음. 기록은 브라우저 localStorage에만 저장되며 개인정보를 수집하지 않음</td></tr>
+</table>
+
+<footer>
+  스와이프 캣 — NAN 2026 (NHN Game × AI 해커톤) 사전 과제 제출물 · AI 활용 기술 문서
+</footer>
+
+</body>
+</html>
