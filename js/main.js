@@ -1,7 +1,7 @@
 import { buildDeck } from './deck.js';
 import { createState, stageOf, applyEffect, tickHunger, computeScore } from './state.js';
 import { roll, TIER_LABEL } from './resolve.js';
-import { catSVG } from './cat.js';
+import { catSVG, probeAssets } from './cat.js';
 import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
 import { tagOf } from './cards.js';
 import { load, recordEnding, submitScore, wouldRank } from './storage.js';
@@ -361,4 +361,4 @@ $('#dex-back').addEventListener('click', renderTitle);
 $('#retry').addEventListener('click', startGame);
 $('#to-title').addEventListener('click', renderTitle);
 bindSwipe($('#game'));
-renderTitle();
+probeAssets().then(renderTitle);

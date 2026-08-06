@@ -34,7 +34,16 @@ html, body {
 }
 [hidden] { display: none !important; }
 
-/* ---------- 고양이 (펜그림 스타일) ---------- */
+/* 그림 파일을 쓸 때 */
+.cat-img {
+  display: block; width: min(60vw, 240px); height: auto;
+  transform: scale(var(--cat-scale, 1)); transform-origin: bottom center;
+  image-rendering: auto; user-select: none; -webkit-user-drag: none;
+}
+.cat-img.cat--proud { animation: pop .5s ease; }
+.cat-img.cat--scared, .cat-img.cat--hurt { animation: shake .3s ease 3; }
+
+/* ---------- 고양이 (펜그림 스타일, 그림이 없을 때의 기본값) ---------- */
 .cat {
   width: min(60vw, 240px);
   height: auto;

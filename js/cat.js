@@ -45,7 +45,29 @@ const FACES = {
     </g>`,
 };
 
+// assets/cat-<표정>.png 가 있으면 그림을 쓰고, 없으면 아래 SVG로 그린다.
+// 그림을 넣기 전에도 게임은 그대로 돌아간다.
+export const MOODS = ['idle', 'happy', 'proud', 'sad', 'scared', 'hurt'];
+let useImages = false;
+
+export function probeAssets() {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => { useImages = true; resolve(true); };
+    img.onerror = () => resolve(false);
+    img.src = 'assets/cat-idle.png';
+  });
+}
+
 export function catSVG({ stage, mood = 'idle' }) {
+  if (useImages) {
+    return `<img class="cat cat-img cat--${mood}" style="--cat-scale:${stage.scale}"
+      src="assets/cat-${mood}.png" alt="" draggable="false">`;
+  }
+  return catInk({ stage, mood });
+}
+
+function catInk({ stage, mood = 'idle' }) {
   const face = FACES[mood] || FACES.idle;
   const crown = stage.key === 'legend'
     ? `<path class="crown" d="M74 24 l10 -22 l12 15 l12 -21 l12 21 l12 -15 l10 22 z"/>`
