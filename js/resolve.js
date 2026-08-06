@@ -56,6 +56,15 @@ export function probabilities(state, card) {
   return p;
 }
 
+// 선택 분기 카드는 중간이 없다. 대성공 아니면 대실패.
+// 어느 쪽을 골랐는지는 확률에 영향을 주지 않는다 — 여기서도 전략은 없다.
+export function rollExtreme(state, card) {
+  const p = probabilities(state, card);
+  const good = p.great + p.good;
+  const bad = p.bad + p.terrible;
+  return Math.random() < good / (good + bad) ? 'great' : 'terrible';
+}
+
 export function roll(state, card) {
   const p = probabilities(state, card);
   let r = Math.random();

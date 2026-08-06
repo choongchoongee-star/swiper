@@ -55,6 +55,39 @@ export function submitScore({ name, score, ending, cards }) {
   return { data, rank: rank === -1 ? null : rank + 1 };
 }
 
+/* ---------- 진행 중인 판 저장 ---------- */
+// 카드를 한 장 넘길 때마다 저장해 두었다가, 앱을 닫았다 와도 이어서 할 수 있게 한다.
+const RUN_KEY = 'swiper.run.v1';
+
+export function saveRun(state, deckIds) {
+  try {
+    localStorage.setItem(RUN_KEY, JSON.stringify({ state, deckIds, at: Date.now() }));
+  } catch {
+    /* 저장에 실패해도 진행 중인 게임은 그대로 계속된다. */
+  }
+}
+
+export function loadRun() {
+  try {
+    const raw = localStorage.getItem(RUN_KEY);
+    if (!raw) return null;
+    const run = JSON.parse(raw);
+    if (!run?.state || !Array.isArray(run.deckIds)) return null;
+    if (run.state.dead || run.state.index >= run.state.total) return null;
+    return run;
+  } catch {
+    return null;
+  }
+}
+
+export function clearRun() {
+  try {
+    localStorage.removeItem(RUN_KEY);
+  } catch {
+    /* 지우지 못해도 다음 시작에서 덮어쓴다. */
+  }
+}
+
 export function wouldRank(score) {
   const { ranks } = load();
   return ranks.length < RANK_SIZE || score > ranks[ranks.length - 1].score;

@@ -5,7 +5,7 @@
 //   대성공·대실패는 반드시 두 개 이상의 문장을 갖는다.
 // choices: 좌/우 선택지. 확률에는 전혀 영향을 주지 않고 문장만 갈라진다.
 
-export const GOOD_CARDS = [
+const GOOD_ALL = [
   {
     id: 'fish', emoji: '🐟', title: '생선 발견', stat: 'abi', tone: 'good',
     text: '어물전 구석에 생선 한 마리가 떨어져 있다. 아무도 안 보는 것 같은데.',
@@ -440,7 +440,7 @@ export const GOOD_CARDS = [
   },
 ];
 
-export const BAD_CARDS = [
+const BAD_ALL = [
   {
     id: 'rain', emoji: '🌧', title: '비 맞음', stat: 'hp', tone: 'bad',
     text: '하늘이 어두워지더니 빗방울이 떨어진다. 털이 젖는 건 정말 싫은데.',
@@ -817,6 +817,12 @@ export const BAD_CARDS = [
   },
 ];
 
+// 좌우 선택이 있는 카드는 따로 뺀다.
+// 자주 나오면 손맛이 흔해지므로 한 판에 몇 번만, 그 대신 결과는 대성공 아니면 대실패다.
+export const CHOICE_CARDS = [...GOOD_ALL, ...BAD_ALL].filter((c) => c.choices);
+export const GOOD_CARDS = GOOD_ALL.filter((c) => !c.choices);
+export const BAD_CARDS = BAD_ALL.filter((c) => !c.choices);
+
 // 판정 없는 연출 카드. 여러 번 나와도 이상하지 않은 일상들.
 export const CALM_CARDS = [
   { id: 'night', emoji: '🌙', title: '밤 산책', text: '아무도 없는 새벽 골목. 이 시간은 온전히 내 것이다.', calm: { hap: 3, exp: 2 } },
@@ -877,6 +883,19 @@ export const CARD_TAG = {
 
 export function tagOf(cardId) {
   return CARD_TAG[cardId] || null;
+}
+
+// 저장된 판을 복원할 때 id로 카드를 되찾기 위한 표.
+// 특수 카드가 이 아래에 선언되므로 처음 쓸 때 만든다.
+let byId = null;
+
+export function cardById(id) {
+  if (!byId) {
+    byId = new Map(
+      [...GOOD_ALL, ...BAD_ALL, ...CALM_CARDS, EXTEND_CARD, CLOVER_CARD, TRIAL_CARD].map((c) => [c.id, c]),
+    );
+  }
+  return byId.get(id) || null;
 }
 
 // 특수 카드

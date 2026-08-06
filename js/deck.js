@@ -2,7 +2,7 @@
 // 좋은 일·나쁜 일은 '비복원 추출'로 뽑는다. 한 바퀴를 다 돌기 전에는 같은 사건이 다시 오지 않는다.
 // 일상 카드(그루밍·하품 같은 것)는 여러 번 나와도 이상하지 않으므로 그냥 섞어 쓴다.
 
-import { GOOD_CARDS, BAD_CARDS, CALM_CARDS, EXTEND_CARD, CLOVER_CARD, TRIAL_CARD } from './cards.js';
+import { GOOD_CARDS, BAD_CARDS, CALM_CARDS, CHOICE_CARDS, EXTEND_CARD, CLOVER_CARD, TRIAL_CARD } from './cards.js';
 
 function shuffled(arr) {
   const a = [...arr];
@@ -60,6 +60,14 @@ export function buildDeck(length = 130) {
 
   // 특수 카드 삽입
   const inserts = [];
+
+  // 선택 분기 카드는 한 판에 네 번만. 조작에 익숙해지도록 첫 12장에는 넣지 않는다.
+  const choicePool = shuffled(CHOICE_CARDS);
+  const span = Math.max(1, Math.floor((length - 16) / 4));
+  for (let i = 0; i < 4 && i < choicePool.length; i++) {
+    inserts.push({ at: 12 + i * span + Math.floor(Math.random() * span), card: choicePool[i] });
+  }
+
   for (const at of [20, 45, 70, 90]) {
     if (Math.random() < 0.4) inserts.push({ at, card: EXTEND_CARD });
   }

@@ -115,6 +115,38 @@ h1 {
 .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
 .btn--ghost { background: transparent; box-shadow: 0 4px 0 rgba(43,29,20,.35); }
 
+/* 타이틀: 버튼을 누르는 대신 위로 밀어 시작한다 — 조작을 미리 몸에 익히게 한다 */
+.title-inner {
+  display: flex; flex-direction: column; align-items: center;
+  will-change: transform;
+}
+.title-inner.snap { transition: transform .25s cubic-bezier(.2,.9,.3,1.2), opacity .25s; }
+.title-inner.launch { transition: transform .3s ease-in, opacity .3s ease-in; }
+
+.swipe-start {
+  margin-top: 18px; padding: 10px 22px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: none; border: none; color: inherit; font: inherit; cursor: pointer;
+}
+.swipe-start .chev {
+  font-size: 30px; line-height: .8; font-weight: 900; color: var(--orange-d);
+  animation: rise 1.6s ease-in-out infinite;
+}
+.swipe-start .swipe-label { font-size: 15px; font-weight: 800; }
+@keyframes rise {
+  0%, 100% { transform: translateY(4px); opacity: .45; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+
+.resume {
+  margin: 14px 0 0; font: inherit; font-size: 14px; font-weight: 800;
+  padding: 11px 24px; border-radius: 999px; cursor: pointer;
+  background: var(--paper); color: var(--ink);
+  border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink);
+}
+.resume:active { transform: translateY(4px); box-shadow: 0 0 0 var(--ink); }
+.resume small { display: block; font-size: 11px; font-weight: 700; opacity: .6; margin-top: 1px; }
+
 .best { margin: 18px 0 0; font-weight: 800; }
 .dex {
   margin: 10px 0 0; font: inherit; font-size: 13px; font-weight: 800;

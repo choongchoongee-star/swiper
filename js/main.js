@@ -1,10 +1,10 @@
 import { buildDeck } from './deck.js';
 import { createState, stageOf, applyEffect, tickHunger, computeScore } from './state.js';
-import { roll, TIER_LABEL } from './resolve.js';
+import { roll, rollExtreme, TIER_LABEL } from './resolve.js';
 import { catSVG, probeAssets } from './cat.js';
 import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
-import { tagOf } from './cards.js';
-import { load, recordEnding, submitScore, wouldRank } from './storage.js';
+import { tagOf, cardById } from './cards.js';
+import { load, recordEnding, submitScore, wouldRank, saveRun, loadRun, clearRun } from './storage.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -30,7 +30,25 @@ function renderTitle() {
   $('#best').textContent = data.best ? `내 최고 기록 ${data.best.toLocaleString()}점` : '아직 기록이 없다';
   $('#dex').textContent = `📖 엔딩 도감 ${collected(data).length} / ${TYPE_COUNT}`;
   $('#recent').innerHTML = rankTable(data.ranks, '명예의 전당');
+  renderResume();
+  $('#title-inner').className = 'title-inner';
+  $('#title-inner').style.transform = '';
+  $('#title-inner').style.opacity = '';
   show('title');
+}
+
+// 진행 중이던 판이 있으면 이어서 할 수 있게 한다.
+function renderResume() {
+  const old = $('#resume');
+  if (old) old.remove();
+  const run = loadRun();
+  if (!run) return;
+  const btn = document.createElement('button');
+  btn.id = 'resume';
+  btn.className = 'resume';
+  btn.innerHTML = `🐾 이어서 하기<small>${run.state.index} / ${run.state.total}장까지 살았다</small>`;
+  btn.addEventListener('click', resumeGame);
+  $('#start').after(btn);
 }
 
 function collected(data) {
@@ -86,6 +104,18 @@ function startGame() {
   deck = buildDeck(total + 30);
   state = createState();
   state.total = total;
+  beginRun();
+}
+
+function resumeGame() {
+  const run = loadRun();
+  if (!run) return startGame();
+  deck = run.deckIds.map(cardById).filter(Boolean);
+  state = { ...createState(), ...run.state };
+  beginRun();
+}
+
+function beginRun() {
   current = null;
   busy = false;
   lastRun = null;
@@ -93,6 +123,12 @@ function startGame() {
   show('game');
   nextCard();
   renderHud();
+  persist();
+}
+
+function persist() {
+  if (state.dead || state.index >= state.total) clearRun();
+  else saveRun(state, deck.map((c) => c.id));
 }
 
 function renderHud() {
@@ -126,7 +162,7 @@ function renderCard(card) {
     <p class="card-text">${card.text}</p>
     <div class="card-cat">${catSVG({ stage, mood: 'idle' })}</div>
     ${choices}`;
-  els.hint.textContent = card.choices ? '좌우로 스와이프해 선택' : '위로 스와이프';
+  els.hint.textContent = card.choices ? '⚡ 좌우로 스와이프해 선택 — 중간은 없다' : '위로 스와이프';
   els.card.querySelectorAll('.choice').forEach((b) =>
     b.addEventListener('click', () => commit(Number(b.dataset.choice))));
 }
@@ -161,7 +197,7 @@ function commit(choiceIdx = null) {
   } else if (card.calm) {
     label = '평온'; text = card.text; eff = card.calm;
   } else {
-    tier = roll(state, card);
+    tier = card.choices ? rollExtreme(state, card) : roll(state, card);
     const outcomes = card.choices ? card.choices[choiceIdx].outcomes : card.outcomes;
     eff = outcomes[tier];
     label = TIER_LABEL[tier];
@@ -184,6 +220,7 @@ function commit(choiceIdx = null) {
   }
 
   renderHud();
+  persist();
   flyOutCard(tier);
   showResult({ label, tier, text, delta, mood: eff.mood });
 
@@ -255,6 +292,7 @@ function announceStage(key) {
 /* ---------- 엔딩 ---------- */
 
 function finish() {
+  clearRun();
   const score = computeScore(state);
   const ending = judgeEnding(state, score);
   const data = recordEnding(ending);
@@ -347,7 +385,47 @@ function bindSwipe(target) {
   target.addEventListener('pointercancel', () => { active = false; els.card.style.transform = ''; });
 }
 
+// 타이틀도 위로 밀어서 시작한다. 첫 화면에서 조작을 미리 익히게 하는 장치다.
+function bindTitleSwipe() {
+  const el = $('#title');
+  const inner = $('#title-inner');
+  let sy = 0, active = false, dy = 0;
+
+  el.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('#dex') || e.target.closest('#resume')) return;
+    active = true; sy = e.clientY; dy = 0;
+    inner.className = 'title-inner';
+  });
+
+  el.addEventListener('pointermove', (e) => {
+    if (!active) return;
+    dy = Math.min(0, e.clientY - sy);
+    inner.style.transform = `translateY(${dy * 0.9}px)`;
+    inner.style.opacity = String(Math.max(0.35, 1 + dy / 260));
+  });
+
+  const end = () => {
+    if (!active) return;
+    active = false;
+    if (dy < -60) return launch();
+    inner.className = 'title-inner snap';
+    inner.style.transform = '';
+    inner.style.opacity = '';
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+}
+
+function launch() {
+  const inner = $('#title-inner');
+  inner.className = 'title-inner launch';
+  inner.style.transform = 'translateY(-120%)';
+  inner.style.opacity = '0';
+  setTimeout(startGame, 260);
+}
+
 document.addEventListener('keydown', (e) => {
+  if (!screens.title.hidden && (e.key === 'ArrowUp' || e.key === 'Enter')) return launch();
   if (screens.game.hidden) return;
   if (resultOpen) hideResult();
   if (e.key === 'ArrowUp' && !current?.choices) commit();
@@ -355,8 +433,9 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight' && current?.choices) commit(1);
 });
 
-$('#start').addEventListener('click', startGame);
+$('#start').addEventListener('click', launch);
 $('#dex').addEventListener('click', renderDex);
+bindTitleSwipe();
 $('#dex-back').addEventListener('click', renderTitle);
 $('#retry').addEventListener('click', startGame);
 $('#to-title').addEventListener('click', renderTitle);
