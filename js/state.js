@@ -12,8 +12,8 @@ export const STAGES = [
 // 실제 체감 난이도는 여기서 조절한다. 400회 시뮬레이션 기준 생존율 70%.
 const HP_START = 60;
 const HP_MAX = 120;
-const DAMAGE_MUL = 0.55;
-const HEAL_MUL = 1.5;
+const DAMAGE_MUL = 0.66;
+const HEAL_MUL = 1.34;
 const HUNGER_EVERY = 2; // 이 장수마다 체력 1 감소
 
 export function createState() {
@@ -21,6 +21,8 @@ export function createState() {
     hp: HP_START, hap: 30, abi: 10, fri: 0, exp: 0,
     bonusScore: 0,
     greatCount: 0,
+    terribleCount: 0,
+    textUse: {},        // 같은 카드가 다시 나왔을 때 다른 문장을 쓰기 위한 사용 횟수
     index: 0,          // 지금까지 넘긴 카드 수
     total: 100,        // 연장 카드로 늘어난다
     cloverLeft: 0,     // 남은 대실패 무효 횟수

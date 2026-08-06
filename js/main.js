@@ -2,8 +2,8 @@ import { buildDeck } from './deck.js';
 import { createState, stageOf, applyEffect, tickHunger, computeScore } from './state.js';
 import { roll, TIER_LABEL } from './resolve.js';
 import { catSVG } from './cat.js';
-import { judgeEnding, causeOf, ENDINGS } from './endings.js';
-import { load, record } from './storage.js';
+import { judgeEnding, causeOf, traitBreakdown, TYPE_COUNT } from './endings.js';
+import { load, recordEnding, submitScore, wouldRank } from './storage.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -15,6 +15,7 @@ const els = {
 };
 
 let deck, state, current, busy = false, resultOpen = false;
+let lastRun = null; // 엔딩 화면에서 랭킹 등록에 쓸 결과
 
 function show(name) {
   for (const [k, el] of Object.entries(screens)) el.hidden = k !== name;
@@ -26,21 +27,43 @@ function renderTitle() {
   const data = load();
   $('#title-cat').innerHTML = catSVG({ stage: { key: 'baby', scale: 0.85 }, mood: 'happy' });
   $('#best').textContent = data.best ? `내 최고 기록 ${data.best.toLocaleString()}점` : '아직 기록이 없다';
-  $('#dex').textContent = `엔딩 도감 ${data.endings.filter((e) => !e.startsWith('death')).length} / ${ENDINGS.length}`;
-  const runs = data.runs.length
-    ? data.runs.map((r) => `<li><span>${r.emoji} ${r.ending}</span><b>${r.score.toLocaleString()}</b></li>`).join('')
-    : '';
-  $('#recent').innerHTML = runs ? `<h3>최근 기록</h3><ul>${runs}</ul>` : '';
+  $('#dex').textContent = `엔딩 도감 ${data.endings.filter((e) => !e.startsWith('death')).length} / ${TYPE_COUNT}`;
+  $('#recent').innerHTML = rankTable(data.ranks, '명예의 전당');
   show('title');
+}
+
+function rankTable(ranks, title) {
+  if (!ranks.length) return '';
+  const rows = ranks.map((r, i) => `
+    <li>
+      <span class="rk">${i + 1}</span>
+      <span class="nm">${escapeHtml(r.name)}</span>
+      <span class="en">${r.emoji}${r.code ? ` ${r.code}` : ''}</span>
+      <b>${r.score.toLocaleString()}</b>
+    </li>`).join('');
+  return `<h3>${title}</h3><ul class="ranks">${rows}</ul>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 /* ---------- 게임 ---------- */
 
+// ?cards=20 으로 짧게 돌려볼 수 있다. 테스트와 시연용.
+function requestedLength() {
+  const n = Number(new URLSearchParams(location.search).get('cards'));
+  return Number.isFinite(n) && n >= 3 ? Math.min(n, 300) : 100;
+}
+
 function startGame() {
-  deck = buildDeck(140);
+  const total = requestedLength();
+  deck = buildDeck(total + 30);
   state = createState();
+  state.total = total;
   current = null;
   busy = false;
+  lastRun = null;
   hideResult();
   show('game');
   nextCard();
@@ -83,6 +106,15 @@ function renderCard(card) {
     b.addEventListener('click', () => commit(Number(b.dataset.choice))));
 }
 
+// 같은 카드가 다시 나와도 같은 문장을 반복하지 않는다.
+function pickText(card, tier, t) {
+  if (!Array.isArray(t)) return t;
+  const key = `${card.id}:${tier}`;
+  const used = state.textUse[key] || 0;
+  state.textUse[key] = used + 1;
+  return t[used % t.length];
+}
+
 function commit(choiceIdx = null) {
   if (busy) return;
   const card = current;
@@ -105,8 +137,9 @@ function commit(choiceIdx = null) {
     const outcomes = card.choices ? card.choices[choiceIdx].outcomes : card.outcomes;
     eff = outcomes[tier];
     label = TIER_LABEL[tier];
-    text = eff.t;
+    text = pickText(card, tier, eff.t);
     if (tier === 'great') state.greatCount++;
+    if (tier === 'terrible') state.terribleCount++;
     if (tier === 'great' || tier === 'terrible') {
       state.highlights.push({ emoji: card.emoji, title: card.title, tier, text });
     }
@@ -196,7 +229,14 @@ function announceStage(key) {
 function finish() {
   const ending = judgeEnding(state);
   const score = computeScore(state);
-  const data = record({ score, ending, cards: state.index });
+  const data = recordEnding(ending);
+  lastRun = { ending, score, cards: state.index };
+
+  const traits = state.dead ? '' : `
+    <div class="traits">
+      <div class="trait-code">${ending.code}</div>
+      <ul>${traitBreakdown(state).map((t) => `<li><b>${t.letter}</b>${t.name}</li>`).join('')}</ul>
+    </div>`;
 
   const highs = state.highlights.slice(-3).reverse()
     .map((h) => `<li class="high high--${h.tier}"><span>${h.emoji}</span><div><b>${h.title} · ${TIER_LABEL[h.tier]}</b><p>${h.text}</p></div></li>`)
@@ -206,12 +246,49 @@ function finish() {
     <div class="ending-cat">${catSVG({ stage: stageOf(state), mood: state.dead ? 'sad' : 'proud' })}</div>
     <div class="ending-name">${ending.emoji} ${ending.name}</div>
     <p class="ending-desc">${ending.desc}</p>
+    ${traits}
     <div class="ending-score">${score.toLocaleString()}<small>점</small></div>
-    <p class="ending-meta">${state.index}장의 인생 · ${stageOf(state).name}${data.best === score ? ' · 🎉 최고 기록!' : ` · 최고 ${data.best.toLocaleString()}점`}</p>
+    <p class="ending-meta">${state.index}장의 인생 · ${stageOf(state).name}${data.best && score <= data.best ? ` · 최고 ${data.best.toLocaleString()}점` : ' · 🎉 최고 기록!'}</p>
     <h3>기억에 남는 순간</h3>
     <ul class="highs">${highs}</ul>`;
+
+  renderSubmit(score);
   show('ending');
   hideResult();
+}
+
+// 오락실처럼 이름을 넣어 랭킹에 올린다.
+function renderSubmit(score) {
+  const box = $('#submit');
+  if (!wouldRank(score)) {
+    box.innerHTML = rankTable(load().ranks, '명예의 전당');
+    return;
+  }
+  const last = load().lastName;
+  box.innerHTML = `
+    <div class="submit-form">
+      <p class="submit-title">🏆 랭킹에 오를 점수다!</p>
+      <div class="submit-row">
+        <input id="rank-name" maxlength="8" placeholder="이름" value="${escapeHtml(last)}" autocomplete="off">
+        <button id="rank-go" class="btn btn--sm">등록</button>
+      </div>
+      <button id="rank-skip" class="link">건너뛰기</button>
+    </div>`;
+  $('#rank-go').addEventListener('click', doSubmit);
+  $('#rank-skip').addEventListener('click', () => {
+    box.innerHTML = rankTable(load().ranks, '명예의 전당');
+  });
+  $('#rank-name').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') doSubmit();
+  });
+}
+
+function doSubmit() {
+  const name = $('#rank-name').value.trim();
+  const { data, rank } = submitScore({ ...lastRun, name });
+  $('#submit').innerHTML = `
+    <p class="submit-done">${rank}위로 등록됐다!</p>
+    ${rankTable(data.ranks, '명예의 전당')}`;
 }
 
 /* ---------- 입력 ---------- */
