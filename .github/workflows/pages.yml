@@ -23,8 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # 배포에 필요한 파일만 추린다. .git/.github/.claude 같은 건 올리지 않는다.
+      - name: Stage site
+        run: |
+          mkdir -p _site
+          cp -r index.html styles.css manifest.json icon.svg js _site/
+          touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
