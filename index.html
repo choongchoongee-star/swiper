@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f7c07a">
+<meta name="description" content="스와이프로 넘겨보는 길고양이 한 마리의 일생. 100장의 카드, 전부 운에 달렸다.">
+<title>스와이프 캣 — 어느 길고양이의 일생</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- 타이틀 -->
+<section id="title" class="screen">
+  <div id="title-cat" class="title-cat"></div>
+  <h1>스와이프 캣</h1>
+  <p class="sub">어느 길고양이의 일생</p>
+  <p class="tag">100장을 넘기는 동안, 전부 운이 정한다.</p>
+  <button id="start" class="btn">인생 시작하기</button>
+  <p id="best" class="best"></p>
+  <p id="dex" class="dex"></p>
+  <div id="recent" class="recent"></div>
+</section>
+
+<!-- 게임 -->
+<section id="game" class="screen" hidden>
+  <header class="hud">
+    <div id="progress" class="progress">1 / 100</div>
+    <div class="score-wrap"><span id="score" class="score">0</span><small>점</small></div>
+  </header>
+  <div id="stats" class="stats"></div>
+
+  <main class="stack">
+    <div id="card" class="card"></div>
+  </main>
+
+  <p id="hint" class="hint">위로 스와이프</p>
+
+  <div id="result" class="result"></div>
+  <div id="stage-banner" class="stage-banner"></div>
+  <div id="flash"></div>
+</section>
+
+<!-- 엔딩 -->
+<section id="ending" class="screen" hidden>
+  <div id="ending-body"></div>
+  <div class="ending-actions">
+    <button id="retry" class="btn">다시 태어나기</button>
+    <button id="to-title" class="btn btn--ghost">처음으로</button>
+  </div>
+</section>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

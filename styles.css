@@ -1,0 +1,247 @@
+/* 스와이프 캣 — 가필드풍 카툰 톤. 굵은 아웃라인, 납작한 채색. */
+
+:root {
+  --ink: #2b1d14;
+  --paper: #fff6e8;
+  --tint: #ffe8d6;
+  --orange: #f5a24a;
+  --orange-d: #e07f2c;
+  --good: #3fa66a;
+  --bad: #d9534f;
+  --gold: #f0b429;
+  --line: 5;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--tint);
+  transition: background .8s ease;
+}
+
+.screen {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom));
+  text-align: center;
+}
+[hidden] { display: none !important; }
+
+/* ---------- 고양이 ---------- */
+.cat {
+  width: min(58vw, 230px);
+  height: auto;
+  transform: scale(var(--cat-scale, 1));
+  transform-origin: bottom center;
+  overflow: visible;
+}
+.cat .body, .cat .head, .cat .ear, .cat .tail, .cat .paw, .cat .muzzle {
+  fill: var(--orange); stroke: var(--ink); stroke-width: var(--line); stroke-linejoin: round;
+}
+.cat .muzzle { fill: #ffe9cf; }
+.cat .tail { fill: none; stroke-width: 16; stroke-linecap: round; }
+.cat .ear-in { fill: #f7b3a4; stroke: none; }
+.cat .stripe { fill: none; stroke: var(--orange-d); stroke-width: 6; stroke-linecap: round; }
+.cat .eye { fill: var(--ink); }
+.cat .glint { fill: #fff; }
+.cat .eye-line, .cat .brow, .cat .mouth {
+  fill: none; stroke: var(--ink); stroke-width: 4.5; stroke-linecap: round;
+}
+.cat .mouth-o { fill: #7a3b3b; stroke: var(--ink); stroke-width: 4; }
+.cat .nose { fill: #e0736b; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.cat .whiskers path { stroke: var(--ink); stroke-width: 3.5; fill: none; stroke-linecap: round; opacity: .8; }
+.cat .blush { fill: none; stroke: #ef8a7a; stroke-width: 4; stroke-linecap: round; }
+.cat .tear { fill: #8ecae6; stroke: var(--ink); stroke-width: 2.5; }
+.cat .bandage { stroke: #fff; stroke-width: 9; stroke-linecap: round; filter: drop-shadow(0 0 0 var(--ink)); }
+.cat .crown { fill: var(--gold); stroke: var(--ink); stroke-width: var(--line); stroke-linejoin: round; }
+
+.cat-head { transform-origin: 104px 120px; animation: bob 2.6s ease-in-out infinite; }
+.cat .tail { animation: swish 2.2s ease-in-out infinite; transform-origin: 168px 150px; }
+@keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
+@keyframes swish { 0%,100% { transform: rotate(0) } 50% { transform: rotate(-8deg) } }
+
+.cat--proud .cat-head { animation: pop .5s ease; }
+.cat--scared { animation: shake .35s ease 2; }
+.cat--hurt { animation: shake .3s ease 3; }
+@keyframes pop { 0%,100% { transform: scale(1) } 40% { transform: scale(1.12) rotate(-4deg) } }
+@keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
+
+/* ---------- 타이틀 ---------- */
+h1 {
+  margin: 4px 0 0; font-size: clamp(34px, 10vw, 52px); letter-spacing: -1px;
+  text-shadow: 3px 3px 0 var(--orange);
+}
+.sub { margin: 2px 0 0; font-weight: 700; opacity: .65; }
+.tag { margin: 14px 0 22px; font-size: 14px; opacity: .55; max-width: 22em; line-height: 1.6; }
+
+.btn {
+  font: inherit; font-weight: 800; font-size: 17px;
+  padding: 14px 34px; border-radius: 999px; cursor: pointer;
+  background: var(--orange); color: var(--ink);
+  border: 4px solid var(--ink);
+  box-shadow: 0 5px 0 var(--ink);
+  transition: transform .08s, box-shadow .08s;
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+.btn--ghost { background: transparent; box-shadow: 0 4px 0 rgba(43,29,20,.35); }
+
+.best { margin: 18px 0 0; font-weight: 800; }
+.dex { margin: 4px 0 0; font-size: 13px; opacity: .6; }
+.recent { margin-top: 16px; width: min(340px, 88vw); font-size: 13px; }
+.recent h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
+.recent ul { list-style: none; margin: 0; padding: 0; }
+.recent li { display: flex; justify-content: space-between; padding: 5px 10px; border-radius: 8px; }
+.recent li:nth-child(odd) { background: rgba(43,29,20,.05); }
+
+/* ---------- HUD ---------- */
+#game { justify-content: flex-start; }
+.hud {
+  width: 100%; max-width: 460px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 800;
+}
+.progress {
+  background: var(--ink); color: var(--paper);
+  padding: 5px 13px; border-radius: 999px; font-size: 14px; letter-spacing: .5px;
+}
+.score-wrap { font-size: 20px; }
+.score-wrap small { font-size: 12px; opacity: .6; margin-left: 2px; }
+
+.stats {
+  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+  margin: 10px 0 4px; width: 100%; max-width: 460px;
+}
+.stat {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: var(--paper); border: 2.5px solid var(--ink);
+  border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 800;
+}
+.stat i { font-style: normal; font-size: 12px; }
+
+/* ---------- 카드 ---------- */
+.stack { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; }
+.card {
+  width: min(400px, 90vw);
+  max-height: 100%;
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 26px;
+  box-shadow: 0 8px 0 var(--ink);
+  padding: 22px 20px 18px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  will-change: transform;
+}
+.card--drag { transition: none; }
+.card--out { animation: flyup .34s ease-in forwards; }
+@keyframes flyup {
+  to { transform: translateY(-120%) rotate(-3deg); opacity: 0; }
+}
+.card--good { background: #fffaf0; }
+.card--bad { background: #fff1ec; }
+.card--special { background: #f3f6ff; border-color: #3b3f66; }
+
+.card-emoji { font-size: 46px; line-height: 1; }
+.card-title { margin: 0; font-size: 21px; }
+.card-text { margin: 2px 0 4px; font-size: 15px; line-height: 1.65; opacity: .8; max-width: 24em; }
+.card-cat { margin-top: 2px; }
+
+.choices { display: flex; gap: 10px; width: 100%; margin-top: 6px; }
+.choice {
+  flex: 1; font: inherit; font-weight: 800; font-size: 14px;
+  padding: 12px 8px; border-radius: 14px; cursor: pointer;
+  background: var(--orange); color: var(--ink);
+  border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink);
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.choice:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.choice span { opacity: .55; }
+
+.hint {
+  margin: 8px 0 4px; font-size: 13px; font-weight: 700; opacity: .45;
+  animation: hintbob 1.8s ease-in-out infinite;
+}
+@keyframes hintbob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
+
+/* ---------- 결과 패널 ---------- */
+.result {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  transform: translateY(110%);
+  transition: transform .28s cubic-bezier(.2,.9,.3,1.2);
+  background: var(--paper);
+  border-top: 4px solid var(--ink);
+  border-radius: 24px 24px 0 0;
+  padding: 14px 18px max(18px, env(safe-area-inset-bottom));
+  display: flex; align-items: center; gap: 12px; text-align: left;
+  z-index: 5;
+}
+.result.show { transform: translateY(0); }
+.result .cat { width: 76px; }
+.result-cat { flex: 0 0 auto; }
+.result-body { flex: 1; min-width: 0; }
+.result-label {
+  display: inline-block; font-size: 12px; font-weight: 900;
+  padding: 3px 10px; border-radius: 999px; border: 2.5px solid var(--ink);
+  background: #ddd;
+}
+.result--great .result-label { background: var(--gold); }
+.result--good .result-label { background: #a8dfbc; }
+.result--bad .result-label { background: #ffd9b0; }
+.result--terrible .result-label { background: var(--bad); color: #fff; }
+.result--great { border-color: var(--gold); }
+.result--terrible { border-color: var(--bad); }
+.result-text { margin: 6px 0 8px; font-size: 14px; line-height: 1.55; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip {
+  font-size: 12px; font-weight: 800; padding: 2px 8px;
+  border-radius: 999px; border: 2px solid var(--ink);
+}
+.chip.up { background: #cdeedb; }
+.chip.down { background: #ffd4d0; }
+
+/* ---------- 성장 단계 배너 ---------- */
+.stage-banner {
+  position: fixed; inset: 0; z-index: 8;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 246, 232, .94);
+  opacity: 0; pointer-events: none; transition: opacity .3s;
+}
+.stage-banner.show { opacity: 1; }
+.stage-inner { display: flex; flex-direction: column; align-items: center; gap: 10px; animation: pop .6s ease; }
+.stage-inner b { font-size: 20px; }
+
+#flash {
+  position: fixed; inset: 0; z-index: 7; pointer-events: none;
+  opacity: 0; transition: opacity .4s;
+}
+#flash.flash--great { background: radial-gradient(circle, rgba(240,180,41,.75), transparent 70%); }
+#flash.flash--terrible { background: radial-gradient(circle, rgba(217,83,79,.7), transparent 70%); }
+#flash.on { opacity: 1; transition: opacity .05s; }
+
+/* ---------- 엔딩 ---------- */
+#ending { overflow-y: auto; justify-content: flex-start; padding-top: 6vh; }
+#ending-body { width: min(420px, 92vw); }
+.ending-cat { display: flex; justify-content: center; }
+.ending-name { font-size: 26px; font-weight: 900; margin-top: 6px; }
+.ending-desc { margin: 6px 0 14px; opacity: .7; font-size: 14px; }
+.ending-score { font-size: 46px; font-weight: 900; line-height: 1; text-shadow: 3px 3px 0 var(--orange); }
+.ending-score small { font-size: 15px; margin-left: 3px; }
+.ending-meta { font-size: 13px; opacity: .6; margin: 8px 0 18px; }
+#ending h3 { font-size: 12px; letter-spacing: 1px; opacity: .5; margin: 0 0 8px; }
+.highs { list-style: none; padding: 0; margin: 0 0 20px; display: flex; flex-direction: column; gap: 8px; }
+.high {
+  display: flex; gap: 10px; text-align: left; align-items: flex-start;
+  background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; padding: 10px 12px;
+}
+.high span { font-size: 22px; }
+.high b { font-size: 13px; }
+.high p { margin: 3px 0 0; font-size: 13px; opacity: .75; line-height: 1.5; }
+.high--great { border-color: var(--gold); }
+.high--terrible { border-color: var(--bad); }
+.ending-actions { display: flex; gap: 10px; padding-bottom: 24px; }

@@ -1,0 +1,20 @@
+{
+  "name": "스와이프 캣 — 어느 길고양이의 일생",
+  "short_name": "스와이프 캣",
+  "description": "스와이프로 넘겨보는 길고양이 한 마리의 일생. 100장의 카드, 전부 운에 달렸다.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffe8d6",
+  "theme_color": "#f7c07a",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
