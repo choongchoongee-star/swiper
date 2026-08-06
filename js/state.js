@@ -23,6 +23,7 @@ export function createState() {
     greatCount: 0,
     terribleCount: 0,
     textUse: {},        // 같은 카드가 다시 나왔을 때 다른 문장을 쓰기 위한 사용 횟수
+    tagCounts: {},      // 어떤 종류의 사건을 몇 번 겪었나 (엔딩 판정에 쓴다)
     index: 0,          // 지금까지 넘긴 카드 수
     total: 100,        // 연장 카드로 늘어난다
     cloverLeft: 0,     // 남은 대실패 무효 횟수

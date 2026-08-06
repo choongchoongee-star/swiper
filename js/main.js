@@ -2,12 +2,13 @@ import { buildDeck } from './deck.js';
 import { createState, stageOf, applyEffect, tickHunger, computeScore } from './state.js';
 import { roll, TIER_LABEL } from './resolve.js';
 import { catSVG } from './cat.js';
-import { judgeEnding, causeOf, traitBreakdown, TYPE_COUNT } from './endings.js';
+import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
+import { tagOf } from './cards.js';
 import { load, recordEnding, submitScore, wouldRank } from './storage.js';
 
 const $ = (sel) => document.querySelector(sel);
 
-const screens = { title: $('#title'), game: $('#game'), ending: $('#ending') };
+const screens = { title: $('#title'), game: $('#game'), ending: $('#ending'), dexview: $('#dexview') };
 const els = {
   progress: $('#progress'), score: $('#score'), stats: $('#stats'),
   card: $('#card'), stage: $('#stage-banner'), result: $('#result'),
@@ -27,9 +28,33 @@ function renderTitle() {
   const data = load();
   $('#title-cat').innerHTML = catSVG({ stage: { key: 'baby', scale: 0.85 }, mood: 'happy' });
   $('#best').textContent = data.best ? `내 최고 기록 ${data.best.toLocaleString()}점` : '아직 기록이 없다';
-  $('#dex').textContent = `엔딩 도감 ${data.endings.filter((e) => !e.startsWith('death')).length} / ${TYPE_COUNT}`;
+  $('#dex').textContent = `📖 엔딩 도감 ${collected(data).length} / ${TYPE_COUNT}`;
   $('#recent').innerHTML = rankTable(data.ranks, '명예의 전당');
   show('title');
+}
+
+function collected(data) {
+  return data.endings.filter((e) => !e.startsWith('death'));
+}
+
+// 모은 엔딩은 그대로, 못 본 엔딩은 물음표로 보여준다.
+function renderDex() {
+  const data = load();
+  const have = new Set(data.endings);
+  $('#dex-count').textContent = `${collected(data).length} / ${TYPE_COUNT} 종을 만났다`;
+  $('#dex-list').innerHTML = DEX.map((e, i) => {
+    if (have.has(e.id)) {
+      return `<li class="dex-item got">
+        <span class="dex-emoji">${e.emoji}</span>
+        <div><b>${e.name}</b><p>${e.desc}</p></div>
+      </li>`;
+    }
+    return `<li class="dex-item">
+      <span class="dex-emoji">❔</span>
+      <div><b>??? <small>No.${String(i + 1).padStart(2, '0')}</small></b><p>아직 만나지 못한 삶.</p></div>
+    </li>`;
+  }).join('');
+  show('dexview');
 }
 
 function rankTable(ranks, title) {
@@ -123,6 +148,9 @@ function commit(choiceIdx = null) {
 
   const stageBefore = stageOf(state).key;
   let tier = null, eff = null, text = '', label = '';
+
+  const tag = tagOf(card.id);
+  if (tag) state.tagCounts[tag] = (state.tagCounts[tag] || 0) + 1;
 
   if (card.special === 'extend') {
     state.total += 5;
@@ -227,16 +255,10 @@ function announceStage(key) {
 /* ---------- 엔딩 ---------- */
 
 function finish() {
-  const ending = judgeEnding(state);
   const score = computeScore(state);
+  const ending = judgeEnding(state, score);
   const data = recordEnding(ending);
   lastRun = { ending, score, cards: state.index };
-
-  const traits = state.dead ? '' : `
-    <div class="traits">
-      <div class="trait-code">${ending.code}</div>
-      <ul>${traitBreakdown(state).map((t) => `<li><b>${t.letter}</b>${t.name}</li>`).join('')}</ul>
-    </div>`;
 
   const highs = state.highlights.slice(-3).reverse()
     .map((h) => `<li class="high high--${h.tier}"><span>${h.emoji}</span><div><b>${h.title} · ${TIER_LABEL[h.tier]}</b><p>${h.text}</p></div></li>`)
@@ -246,7 +268,6 @@ function finish() {
     <div class="ending-cat">${catSVG({ stage: stageOf(state), mood: state.dead ? 'sad' : 'proud' })}</div>
     <div class="ending-name">${ending.emoji} ${ending.name}</div>
     <p class="ending-desc">${ending.desc}</p>
-    ${traits}
     <div class="ending-score">${score.toLocaleString()}<small>점</small></div>
     <p class="ending-meta">${state.index}장의 인생 · ${stageOf(state).name}${data.best && score <= data.best ? ` · 최고 ${data.best.toLocaleString()}점` : ' · 🎉 최고 기록!'}</p>
     <h3>기억에 남는 순간</h3>
@@ -335,6 +356,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 $('#start').addEventListener('click', startGame);
+$('#dex').addEventListener('click', renderDex);
+$('#dex-back').addEventListener('click', renderTitle);
 $('#retry').addEventListener('click', startGame);
 $('#to-title').addEventListener('click', renderTitle);
 bindSwipe($('#game'));

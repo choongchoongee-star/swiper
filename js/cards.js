@@ -245,6 +245,190 @@ export const GOOD_CARDS = [
     },
   },
   {
+    id: 'fishmonger', emoji: '🐠', title: '생선가게 아저씨', stat: 'hap', tone: 'good',
+    text: '가게 앞을 어슬렁거리면 가끔 뭔가 던져주는 사람이 있다.',
+    outcomes: {
+      great: { t: ['오늘은 손질하고 남은 걸 통째로 주셨다. 단골의 특권이다.', '아저씨가 내 자리까지 만들어줬다. 이제 여긴 내 가게다.'], mood: 'proud', hp: 16, hap: 10 },
+      good: { t: '한 토막 얻어먹었다. 오늘도 무사히 넘겼다.', mood: 'happy', hp: 10, hap: 4 },
+      bad: { t: '오늘은 손님이 많아 나를 못 봤다.', mood: 'sad', hp: 1 },
+      terrible: { t: ['가게가 문을 닫았다. 셔터에 종이만 붙어 있다.', '새 주인은 나를 보자마자 발을 굴렀다.'], mood: 'sad', hap: -10 },
+    },
+  },
+  {
+    id: 'petting', emoji: '🤲', title: '조심스러운 손', stat: 'hap', tone: 'good',
+    text: '아이가 손을 내밀고 가만히 기다린다. 만져도 되냐고 묻는 것 같다.',
+    outcomes: {
+      great: { t: ['턱 밑을 정확히 긁어줬다. 이 아이는 재능이 있다.', '골골 소리가 저절로 나왔다. 나도 놀랐다.'], mood: 'proud', hap: 15, hp: 4 },
+      good: { t: '한참 쓰다듬어줬다. 나쁘지 않았다.', mood: 'happy', hap: 8 },
+      bad: { t: '손이 다가오자 나도 모르게 물러섰다.', mood: 'scared', hap: 1 },
+      terrible: { t: ['갑자기 꼬리를 잡아당겼다. 아이는 아이였다.', '번쩍 들어 올려졌다. 발톱이 저절로 나왔다.'], mood: 'scared', hap: -8, hp: -3 },
+    },
+  },
+  {
+    id: 'warehouse', emoji: '🏚', title: '빈 창고', stat: 'abi', tone: 'good',
+    text: '문이 살짝 열린 창고다. 안에서 먼지 냄새와 쥐 냄새가 난다.',
+    outcomes: {
+      great: { t: ['아무도 모르는 아지트를 얻었다. 비도 바람도 여기까지는 못 온다.', '구석에서 사료 포대를 찾아냈다. 오늘부로 나는 부자다.'], mood: 'proud', exp: 16, hap: 10, hp: 8 },
+      good: { t: '한 바퀴 둘러보고 나왔다. 다음에 또 와야지.', mood: 'happy', exp: 8 },
+      bad: { t: '문이 잠겨 있었다. 냄새만 실컷 맡았다.', mood: 'sad', exp: 2 },
+      terrible: { t: ['들어갔더니 문이 닫혔다. 밤새 갇혀 있었다.', '쌓아둔 짐이 무너졌다. 간신히 빠져나왔다.'], mood: 'hurt', hp: -12, hap: -6 },
+    },
+  },
+  {
+    id: 'vent', emoji: '♨️', title: '환기구', stat: 'hp', tone: 'good',
+    text: '길바닥 틈에서 따뜻한 바람이 올라온다. 겨울에는 이만한 곳이 없다.',
+    outcomes: {
+      great: { t: ['바람이 가장 잘 나오는 자리를 차지했다. 오늘 밤은 봄이다.', '몸이 완전히 녹았다. 이런 밤이 매일이면 좋겠다.'], mood: 'proud', hp: 16, hap: 8 },
+      good: { t: '몸을 데우고 잠깐 졸았다.', mood: 'happy', hp: 9 },
+      bad: { t: '먼저 온 고양이들로 자리가 없다.', mood: 'sad', hp: 2 },
+      terrible: { t: ['매연 섞인 바람이었다. 기침이 멎지 않는다.', '자다가 발을 헛디뎌 틈에 빠질 뻔했다.'], mood: 'hurt', hp: -8 },
+    },
+  },
+  {
+    id: 'catnip', emoji: '🌿', title: '캣닢', stat: 'hap', tone: 'good',
+    text: '화단에서 묘한 냄새가 난다. 머리가 어질어질하면서 기분이 좋아진다.',
+    outcomes: {
+      great: { t: ['세상이 아름다워졌다. 오늘 일은 잘 기억나지 않는다.', '한참을 뒹굴었다. 이런 게 행복이구나.'], mood: 'proud', hap: 16, exp: 4 },
+      good: { t: '기분 좋게 취했다. 낮잠이 달았다.', mood: 'happy', hap: 9 },
+      bad: { t: '냄새만 맡고 지나갔다. 오늘은 별로다.', mood: 'idle', hap: 2 },
+      terrible: { t: ['취해서 비틀거리다 화분을 엎었다. 사람이 뛰어나왔다.', '정신을 차려보니 낯선 골목이었다.'], mood: 'scared', hp: -5, hap: -4 },
+    },
+  },
+  {
+    id: 'frog', emoji: '🐸', title: '개구리', stat: 'abi', tone: 'good',
+    text: '물가에서 뭔가 폴짝 뛰었다. 저건 처음 보는 사냥감이다.',
+    outcomes: {
+      great: { t: ['앞발로 정확히 눌렀다. 새로운 사냥법을 익혔다.', '물에 빠지지 않고 잡아냈다. 나는 만능이다.'], mood: 'proud', exp: 18, abi: 6 },
+      good: { t: '쫓아다니다 놓쳤다. 그래도 재밌었다.', mood: 'happy', exp: 9 },
+      bad: { t: '너무 빨라서 구경만 했다.', mood: 'idle', exp: 3 },
+      terrible: { t: ['쫓다가 물에 빠졌다. 온몸이 젖었다.', '이상한 맛이 났다. 하루 종일 침을 흘렸다.'], mood: 'hurt', hp: -8 },
+    },
+  },
+  {
+    id: 'cicada', emoji: '🦗', title: '매미', stat: 'abi', tone: 'good',
+    text: '나무에서 시끄러운 소리가 난다. 저 소리의 정체를 확인해야겠다.',
+    outcomes: {
+      great: { t: ['나무를 타고 올라가 앞발로 낚아챘다. 소리가 뚝 그쳤다.', '떨어지는 매미를 공중에서 받았다. 완벽한 여름이었다.'], mood: 'proud', exp: 16, abi: 5 },
+      good: { t: '나무를 한참 긁었다. 사냥은 실패했지만 발톱은 날카로워졌다.', mood: 'happy', exp: 8, abi: 2 },
+      bad: { t: '올려다보다 목만 아팠다.', mood: 'idle', exp: 2 },
+      terrible: { t: ['나무에서 미끄러져 떨어졌다.', '매미가 얼굴로 날아들었다. 소리를 지르며 도망쳤다.'], mood: 'scared', hp: -6 },
+    },
+  },
+  {
+    id: 'library', emoji: '📚', title: '조용한 창가', stat: 'hap', tone: 'good',
+    text: '사람들이 조용히 앉아 종이를 넘기는 곳이다. 창가 자리가 비어 있다.',
+    outcomes: {
+      great: { t: ['아무도 나를 쫓아내지 않았다. 오후 내내 그 자리에 있었다.', '누가 조용히 방석을 밀어줬다. 이곳 사람들은 다정하다.'], mood: 'proud', hap: 14, exp: 6 },
+      good: { t: '햇볕 드는 창턱에서 한숨 잤다.', mood: 'happy', hap: 8 },
+      bad: { t: '들어가려다 문이 닫혔다.', mood: 'sad', hap: 1 },
+      terrible: { t: ['사람들이 웅성거리자 직원이 나를 내보냈다.', '놀라서 뛰다가 책 더미를 무너뜨렸다.'], mood: 'scared', hap: -8 },
+    },
+  },
+  {
+    id: 'truck', emoji: '🚚', title: '트럭 짐칸', stat: 'abi', tone: 'good',
+    text: '짐칸 문이 열려 있다. 저기 올라가면 어디까지 갈 수 있을까.',
+    choices: [
+      {
+        label: '올라탄다',
+        outcomes: {
+          great: { t: ['시장 한복판에 내렸다. 오늘은 잔칫날이다.', '바람을 맞으며 동네를 한 바퀴 돌았다. 최고의 여행이었다.'], mood: 'proud', exp: 22, hap: 10 },
+          good: { t: '두 골목쯤 가서 내렸다. 새로운 냄새가 가득하다.', mood: 'happy', exp: 12 },
+          bad: { t: '올라가려는데 문이 닫혔다.', mood: 'idle', exp: 3 },
+          terrible: { t: ['너무 멀리 왔다. 돌아오는 데 며칠이 걸렸다.', '흔들리는 짐에 깔릴 뻔했다.'], mood: 'hurt', hp: -12, hap: -8 },
+        },
+      },
+      {
+        label: '보낸다',
+        outcomes: {
+          great: { t: ['트럭이 떠난 자리에 생선 상자가 남아 있었다.', '가지 않기로 한 게 옳았다. 그날 저녁 좋은 일이 있었다.'], mood: 'proud', exp: 22, hap: 10 },
+          good: { t: '멀어지는 트럭을 한참 봤다. 나는 여기가 좋다.', mood: 'happy', exp: 12 },
+          bad: { t: '괜히 아쉬웠다.', mood: 'sad', exp: 3 },
+          terrible: { t: ['미련이 남아 뒤쫓다 큰길까지 나갔다.', '트럭이 지나간 자리에서 매연을 잔뜩 마셨다.'], mood: 'hurt', hp: -12, hap: -8 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'garden', emoji: '🪴', title: '옥상 텃밭', stat: 'abi', tone: 'good',
+    text: '옥상에 흙과 풀이 가득하다. 여긴 아무도 안 오는 것 같다.',
+    outcomes: {
+      great: { t: ['흙에 몸을 비비고 풀을 뜯었다. 나만의 정원이 생겼다.', '벌레도 많고 햇볕도 좋다. 여기가 낙원이구나.'], mood: 'proud', hap: 12, exp: 10 },
+      good: { t: '풀을 조금 뜯어 먹고 뒹굴었다.', mood: 'happy', hap: 7 },
+      bad: { t: '문이 잠겨 올라가지 못했다.', mood: 'sad', exp: 2 },
+      terrible: { t: ['약을 친 지 얼마 안 된 흙이었다. 속이 뒤집혔다.', '주인이 올라와 물을 뿌렸다.'], mood: 'hurt', hp: -9 },
+    },
+  },
+  {
+    id: 'festival', emoji: '🎪', title: '축제 노점', stat: 'abi', tone: 'good',
+    text: '골목이 온통 시끄럽고, 온갖 음식 냄새가 뒤엉켜 있다.',
+    outcomes: {
+      great: { t: ['떨어진 어묵을 통째로 챙겼다. 축제는 좋은 것이다.', '취한 사람들이 자꾸 먹을 걸 던져줬다. 배가 터질 것 같다.'], mood: 'proud', hp: 16, hap: 10 },
+      good: { t: '떨어진 부스러기를 주워 먹었다.', mood: 'happy', hp: 8, hap: 3 },
+      bad: { t: '사람이 너무 많아 근처도 못 갔다.', mood: 'scared', hap: -2 },
+      terrible: { t: ['사람들 발에 밟힐 뻔했다. 겨우 빠져나왔다.', '폭죽 소리에 놀라 밤새 숨어 있었다.'], mood: 'scared', hp: -10, hap: -8 },
+    },
+  },
+  {
+    id: 'can', emoji: '🥫', title: '통조림', stat: 'abi', tone: 'good',
+    text: '누가 따다 만 통조림을 두고 갔다. 냄새가 기가 막힌다.',
+    outcomes: {
+      great: { t: ['앞발로 뚜껑을 젖히고 싹 비웠다. 오늘은 내가 이겼다.', '통째로 굴려 안전한 곳에서 천천히 먹었다.'], mood: 'proud', hp: 18, hap: 6 },
+      good: { t: '남은 걸 핥아 먹었다. 배가 든든하다.', mood: 'happy', hp: 11 },
+      bad: { t: '뚜껑이 안 열린다. 냄새만 맡다 포기했다.', mood: 'sad', hp: 1 },
+      terrible: { t: ['날카로운 뚜껑에 혀를 베였다.', '오래된 것이었나 보다. 밤새 앓았다.'], mood: 'hurt', hp: -8 },
+    },
+  },
+  {
+    id: 'mother', emoji: '🐈', title: '어미의 냄새', stat: 'fri', tone: 'good',
+    text: '어디선가 아주 오래된, 그러나 잊을 수 없는 냄새가 난다.',
+    outcomes: {
+      great: { t: ['골목 끝에서 어미를 다시 만났다. 아무 말도 필요 없었다.', '어미가 나를 알아봤다. 그 눈빛을 평생 기억할 것이다.'], mood: 'proud', hap: 20, fri: 1 },
+      good: { t: '냄새를 따라 한참 걸었다. 마음이 이상하게 놓였다.', mood: 'happy', hap: 10 },
+      bad: { t: '착각이었다. 다른 고양이의 냄새였다.', mood: 'sad', hap: 2 },
+      terrible: { t: ['냄새는 끊겼고, 그 자리엔 아무것도 없었다.', '너무 오래 헤맸다. 돌아오는 길에 비를 맞았다.'], mood: 'sad', hap: -10, hp: -6 },
+    },
+  },
+  {
+    id: 'boss', emoji: '🐯', title: '대장 고양이', stat: 'fri', tone: 'good',
+    text: '이 동네에서 가장 덩치 큰 고양이가 나를 부른다. 도망칠 수는 없다.',
+    outcomes: {
+      great: { t: ['대장이 내 옆에 앉았다. 나는 인정받았다.', '"이 골목은 네가 맡아라." 그런 눈빛이었다.'], mood: 'proud', fri: 2, abi: 8, exp: 12 },
+      good: { t: '가볍게 코인사를 나눴다. 나쁘지 않은 사이다.', mood: 'happy', fri: 1, exp: 5 },
+      bad: { t: '눈을 피하고 지나갔다. 아직은 이르다.', mood: 'scared', hap: -2 },
+      terrible: { t: ['대장의 심기를 건드렸다. 한참을 쫓겨 다녔다.', '앞발 한 대에 나가떨어졌다. 격이 다르다.'], mood: 'hurt', hp: -14, hap: -6 },
+    },
+  },
+  {
+    id: 'homeless', emoji: '🧣', title: '골목 끝의 사람', stat: 'hap', tone: 'good',
+    text: '늘 같은 자리에 앉아 있는 사람이 있다. 오늘은 나를 보고 자리를 내준다.',
+    outcomes: {
+      great: { t: ['자기 밥을 나눠줬다. 가진 게 없는 사람이 더 잘 나눈다.', '품에 안겨 잤다. 서로에게 온기가 필요했다.'], mood: 'proud', hap: 18, hp: 10 },
+      good: { t: '옆에 앉아 한참을 같이 있었다.', mood: 'happy', hap: 10, hp: 3 },
+      bad: { t: '오늘은 그 자리에 아무도 없었다.', mood: 'sad', hap: 1 },
+      terrible: { t: ['며칠째 보이지 않는다. 그 자리엔 종이상자만 남았다.', '사람들이 그 사람을 데려갔다. 나는 아무것도 할 수 없었다.'], mood: 'sad', hap: -14 },
+    },
+  },
+  {
+    id: 'mailbox', emoji: '📮', title: '우체통 위', stat: 'hap', tone: 'good',
+    text: '우체통 위가 딱 내 몸 크기다. 게다가 여긴 사람들이 다 지나간다.',
+    outcomes: {
+      great: { t: ['지나가는 사람마다 나를 보고 웃었다. 오늘 나는 이 골목의 스타다.', '사진을 찍히고 간식을 얻었다. 이 자리는 명당이다.'], mood: 'proud', hap: 14, hp: 6 },
+      good: { t: '높은 데서 동네를 내려다봤다. 기분이 좋다.', mood: 'happy', hap: 8 },
+      bad: { t: '집배원이 와서 자리를 비켜야 했다.', mood: 'idle', hap: 2 },
+      terrible: { t: ['졸다가 떨어졌다. 창피하다.', '누가 나를 밀어 떨어뜨렸다. 웃으면서.'], mood: 'hurt', hp: -6, hap: -6 },
+    },
+  },
+  {
+    id: 'boat', emoji: '⛵', title: '낚싯배', stat: 'abi', tone: 'good',
+    text: '물가에 배가 묶여 있다. 갑판에 생선 냄새가 가득하다.',
+    outcomes: {
+      great: { t: ['그물 아래 남은 생선을 잔뜩 챙겼다. 오늘은 어부다.', '뱃사람이 웃으며 한 마리를 던져줬다.'], mood: 'proud', hp: 17, exp: 10 },
+      good: { t: '갑판을 뒤져 몇 조각 찾았다.', mood: 'happy', hp: 9 },
+      bad: { t: '배가 흔들려 올라가지 못했다.', mood: 'scared', exp: 2 },
+      terrible: { t: ['배가 움직이기 시작했다. 뛰어내리다 물에 빠졌다.', '그물에 발이 걸려 한참을 버둥거렸다.'], mood: 'hurt', hp: -13 },
+    },
+  },
+  {
     id: 'rooftop', emoji: '🌇', title: '노을', stat: 'hap', tone: 'good',
     text: '지붕 끝에 앉으니 하늘이 온통 주황색이다.',
     outcomes: {
@@ -472,6 +656,156 @@ export const BAD_CARDS = [
     },
   },
   {
+    id: 'firework', emoji: '🎆', title: '폭죽', stat: 'hap', tone: 'bad',
+    text: '하늘이 갑자기 터졌다. 귀가 찢어질 것 같다.',
+    outcomes: {
+      great: { t: ['소리가 나기 전에 미리 숨었다. 나는 눈치가 빠르다.', '터지는 불빛을 구경했다. 무섭기만 한 건 아니었다.'], mood: 'proud', exp: 12 },
+      good: { t: '귀를 접고 구석에서 버텼다.', mood: 'scared', hap: -4 },
+      bad: { t: '놀라서 아무 데나 뛰어들었다. 발이 까졌다.', mood: 'scared', hp: -8, hap: -7 },
+      terrible: { t: ['공포에 질려 큰길까지 달렸다. 돌아오는 데 이틀이 걸렸다.', '한참을 떨었다. 그날 이후 밤이 무서워졌다.'], mood: 'hurt', hp: -14, hap: -12 },
+    },
+  },
+  {
+    id: 'fogger', emoji: '💨', title: '소독차', stat: 'hp', tone: 'bad',
+    text: '하얀 연기를 뿜는 차가 골목으로 들어온다. 숨이 막힌다.',
+    outcomes: {
+      great: { t: ['연기가 오기 전에 지붕 위로 피했다. 아래를 내려다보며 기다렸다.', '바람 방향을 읽고 반대편으로 갔다. 완벽했다.'], mood: 'proud', exp: 12 },
+      good: { t: '숨을 참고 골목을 빠져나왔다.', mood: 'scared', hp: -4 },
+      bad: { t: '연기를 잔뜩 마셨다. 눈이 맵고 기침이 난다.', mood: 'hurt', hp: -11 },
+      terrible: { t: ['연기 속에서 방향을 잃었다. 한참을 헤맸다.', '며칠 동안 숨소리가 이상했다.'], mood: 'hurt', hp: -17, hap: -6 },
+    },
+  },
+  {
+    id: 'drunk', emoji: '🍺', title: '취객', stat: 'abi', tone: 'bad',
+    text: '비틀거리는 사람이 나를 향해 다가온다. 냄새가 지독하다.',
+    outcomes: {
+      great: { t: ['안주를 통째로 떨어뜨리고 갔다. 뜻밖의 저녁이다.', '한참 혼잣말을 하더니 그냥 지나갔다. 나는 조용히 기다렸다.'], mood: 'proud', hp: 8, exp: 8 },
+      good: { t: '멀찍이 떨어져 지나가길 기다렸다.', mood: 'scared', hap: -3 },
+      bad: { t: '갑자기 소리를 질러 놀라 도망쳤다.', mood: 'scared', hp: -6, hap: -7 },
+      terrible: { t: ['발길질을 피하지 못했다. 옆구리가 아프다.', '캔이 날아왔다. 사람이 이렇게 무서울 수 있구나.'], mood: 'hurt', hp: -15, hap: -10 },
+    },
+  },
+  {
+    id: 'poison', emoji: '☠️', title: '수상한 먹이', stat: 'abi', tone: 'bad',
+    text: '길 한복판에 사료가 뿌려져 있다. 이상하다. 여긴 급식소가 아닌데.',
+    outcomes: {
+      great: { t: ['냄새가 이상해서 입도 대지 않았다. 직감이 나를 살렸다.', '한참 지켜보다 그냥 돌아섰다. 그날 밤 다른 고양이 소식을 들었다.'], mood: 'proud', exp: 18, abi: 5 },
+      good: { t: '조금 먹다 이상해서 뱉었다.', mood: 'scared', hp: -5 },
+      bad: { t: '먹고 나서 밤새 토했다.', mood: 'hurt', hp: -14 },
+      terrible: { t: ['배 속이 타는 것 같다. 아무것도 보이지 않는다...', '먹은 걸 후회할 새도 없었다. 몸이 말을 듣지 않는다.'], mood: 'hurt', hp: -24 },
+    },
+  },
+  {
+    id: 'monsoon', emoji: '🌊', title: '장마', stat: 'hp', tone: 'bad',
+    text: '비가 며칠째 그치지 않는다. 골목이 온통 물이다.',
+    outcomes: {
+      great: { t: ['높고 마른 자리를 미리 찜해뒀다. 장마쯤은 견딜 만하다.', '빗물받이 아래 굴을 찾았다. 여긴 아주 아늑하다.'], mood: 'proud', exp: 10 },
+      good: { t: '젖은 채로 며칠을 버텼다.', mood: 'sad', hp: -6, hap: -4 },
+      bad: { t: '털이 마를 새가 없다. 몸이 무겁고 춥다.', mood: 'hurt', hp: -13, hap: -7 },
+      terrible: { t: ['물이 잠자리까지 차올랐다. 밤새 떠밀려 다녔다.', '며칠을 굶고 젖어 있었다. 이제 일어설 힘이 없다.'], mood: 'hurt', hp: -20, hap: -10 },
+    },
+  },
+  {
+    id: 'heatwave', emoji: '🥵', title: '폭염', stat: 'hp', tone: 'bad',
+    text: '아스팔트가 발바닥을 태운다. 그늘이 하나도 없다.',
+    outcomes: {
+      great: { t: ['지하 주차장을 찾아냈다. 여긴 완벽하게 시원하다.', '누가 물그릇을 내놨다. 이 골목엔 아직 좋은 사람이 있다.'], mood: 'proud', hp: 6, exp: 8 },
+      good: { t: '그늘에 늘어져 하루를 넘겼다.', mood: 'idle', hp: -5 },
+      bad: { t: '혀를 내밀고 헐떡였다. 물이 어디에도 없다.', mood: 'hurt', hp: -12 },
+      terrible: { t: ['머리가 어지럽고 앞이 흐리다. 그늘까지 갈 수 있을까.', '뜨거운 바닥에 발바닥을 데었다. 걷는 것도 고통이다.'], mood: 'hurt', hp: -19, hap: -6 },
+    },
+  },
+  {
+    id: 'bike', emoji: '🚲', title: '자전거', stat: 'abi', tone: 'bad',
+    text: '소리도 없이 자전거가 코앞까지 왔다.',
+    outcomes: {
+      great: { t: ['바퀴 사이로 유유히 빠져나왔다. 이 정도는 놀이다.', '먼저 알아채고 담 위로 올라갔다. 나는 늘 한 발 빠르다.'], mood: 'proud', exp: 12, abi: 3 },
+      good: { t: '아슬아슬하게 피했다. 심장이 뛴다.', mood: 'scared', hap: -3 },
+      bad: { t: '피하다 넘어져 무릎이 까졌다.', mood: 'hurt', hp: -8 },
+      terrible: { t: ['꼬리를 밟혔다. 비명이 저절로 나왔다.', '부딪혀 나가떨어졌다. 한참을 못 일어났다.'], mood: 'hurt', hp: -16 },
+    },
+  },
+  {
+    id: 'glass', emoji: '🪟', title: '유리창', stat: 'abi', tone: 'bad',
+    text: '저쪽에 새가 보인다. 앞이 뚫려 있는 줄 알았는데.',
+    outcomes: {
+      great: { t: ['직전에 알아채고 멈췄다. 하마터면 큰일 날 뻔했다.', '유리를 앞발로 두드려 확인했다. 나는 신중한 고양이다.'], mood: 'proud', exp: 12, abi: 4 },
+      good: { t: '코를 살짝 부딪혔다. 창피하다.', mood: 'sad', hp: -3 },
+      bad: { t: '세게 부딪혔다. 한참 어질어질했다.', mood: 'hurt', hp: -9 },
+      terrible: { t: ['유리가 깨졌다. 발과 얼굴에서 피가 난다.', '충격에 정신을 잃었다. 깨어보니 밤이었다.'], mood: 'hurt', hp: -18 },
+    },
+  },
+  {
+    id: 'weasel', emoji: '🦡', title: '족제비', stat: 'abi', tone: 'bad',
+    text: '길고 날렵한 짐승이 이빨을 드러낸다. 개보다 빠르다.',
+    outcomes: {
+      great: { t: ['높은 담으로 올라가 따돌렸다. 저 녀석은 못 올라온다.', '정면으로 하악질했더니 물러섰다. 기 싸움에서 이겼다.'], mood: 'proud', exp: 20, abi: 6 },
+      good: { t: '간신히 거리를 벌리고 도망쳤다.', mood: 'scared', hp: -5 },
+      bad: { t: '뒷다리를 물렸다. 절뚝이며 도망쳤다.', mood: 'hurt', hp: -13 },
+      terrible: { t: ['목덜미를 물렸다. 살아 돌아온 게 다행이다.', '한참을 뒹굴며 싸웠다. 온몸이 성한 데가 없다.'], mood: 'hurt', hp: -21 },
+    },
+  },
+  {
+    id: 'snare', emoji: '🕸', title: '얽힌 줄', stat: 'abi', tone: 'bad',
+    text: '풀숲을 지나는데 다리에 뭔가 감겼다. 당길수록 조여든다.',
+    outcomes: {
+      great: { t: ['이빨로 하나씩 끊어냈다. 침착함이 나를 구했다.', '몸을 비틀어 빠져나왔다. 유연함은 고양이의 재산이다.'], mood: 'proud', exp: 18, abi: 5 },
+      good: { t: '한참 씨름하다 겨우 풀었다.', mood: 'scared', hp: -5 },
+      bad: { t: '반나절을 갇혀 있었다. 다리에 자국이 깊게 남았다.', mood: 'hurt', hp: -13 },
+      terrible: { t: ['조여든 줄에 발이 상했다. 제대로 딛지 못하겠다.', '아무도 오지 않는 곳이었다. 밤이 아주 길었다.'], mood: 'hurt', hp: -20, hap: -8 },
+    },
+  },
+  {
+    id: 'bath', emoji: '🛁', title: '목욕', stat: 'hap', tone: 'bad',
+    text: '누가 나를 붙잡더니 물이 가득한 곳으로 데려간다. 이건 아니다.',
+    outcomes: {
+      great: { t: ['버둥거려 도망쳤다. 젖은 건 나뿐만이 아니었다.', '끝나고 나니 털이 뽀송했다. 인정하긴 싫지만 나쁘지 않다.'], mood: 'proud', hap: 6, hp: 4 },
+      good: { t: '체념하고 견뎠다. 빨리 끝나기만 바랐다.', mood: 'sad', hap: -5 },
+      bad: { t: '물이 코로 들어갔다. 최악의 하루다.', mood: 'hurt', hap: -11, hp: -5 },
+      terrible: { t: ['공포에 질려 발톱을 세웠고, 그 뒤로 그 사람은 나를 피한다.', '오들오들 떨다 감기에 걸렸다.'], mood: 'hurt', hp: -12, hap: -12 },
+    },
+  },
+  {
+    id: 'moved', emoji: '📦', title: '떠난 사람', stat: 'hap', tone: 'bad',
+    text: '늘 밥을 주던 집 앞에 짐이 잔뜩 쌓여 있다.',
+    outcomes: {
+      great: { t: ['떠나기 전 사료를 한 포대 두고 갔다. 잊지 않았구나.', '새로 온 사람도 나를 챙겨줬다. 운이 좋았다.'], mood: 'happy', hp: 10, hap: 5 },
+      good: { t: '멀어지는 차를 한참 봤다.', mood: 'sad', hap: -6 },
+      bad: { t: '빈 그릇만 며칠째 그대로다.', mood: 'sad', hap: -12, hp: -5 },
+      terrible: { t: ['문 앞에서 사흘을 기다렸다. 아무도 오지 않았다.', '내 이름을 불러주던 목소리가 이제 없다.'], mood: 'sad', hap: -18, hp: -6 },
+    },
+  },
+  {
+    id: 'removed', emoji: '🚮', title: '철거된 자리', stat: 'hap', tone: 'bad',
+    text: '겨울마다 쓰던 상자집이 있던 자리가 텅 비어 있다.',
+    outcomes: {
+      great: { t: ['누가 더 튼튼한 집을 새로 놓아줬다.', '옆 골목에서 더 좋은 자리를 찾았다. 전화위복이다.'], mood: 'happy', hp: 8, hap: 6 },
+      good: { t: '새 자리를 찾아 헤맸다. 어떻게든 되겠지.', mood: 'sad', hap: -5, hp: -3 },
+      bad: { t: '마땅한 곳이 없어 노숙했다.', mood: 'sad', hp: -11, hap: -8 },
+      terrible: { t: ['며칠째 잘 곳이 없다. 몸이 버티지 못하고 있다.', '내 냄새가 밴 것들이 전부 사라졌다.'], mood: 'hurt', hp: -17, hap: -12 },
+    },
+  },
+  {
+    id: 'badfood', emoji: '🤢', title: '상한 사료', stat: 'hp', tone: 'bad',
+    text: '그릇에 남은 사료에서 시큼한 냄새가 난다. 그래도 배는 고프다.',
+    outcomes: {
+      great: { t: ['먹지 않고 참았다. 배는 고팠지만 몸은 지켰다.', '멀쩡한 부분만 골라 먹었다. 요령이 생겼다.'], mood: 'proud', exp: 10, abi: 3 },
+      good: { t: '조금만 먹고 물러섰다.', mood: 'idle', hp: -3 },
+      bad: { t: '먹고 나서 온종일 배가 아팠다.', mood: 'hurt', hp: -11 },
+      terrible: { t: ['먹은 걸 전부 게워냈다. 몸에 남은 게 없다.', '이틀 동안 아무것도 못 먹고 앓았다.'], mood: 'hurt', hp: -18 },
+    },
+  },
+  {
+    id: 'losskit', emoji: '💔', title: '작은 이별', stat: 'fri', tone: 'bad',
+    text: '늘 뒤를 따라다니던 작은 녀석이 오늘은 보이지 않는다.',
+    outcomes: {
+      great: { t: ['좋은 집으로 갔다는 걸 알게 됐다. 잘된 일이다, 정말로.', '한참 뒤 그 녀석이 다시 나타났다. 훌쩍 컸다.'], mood: 'happy', hap: 6 },
+      good: { t: '어딘가에서 잘 지내고 있을 거라고 믿기로 했다.', mood: 'sad', hap: -7 },
+      bad: { t: '녀석이 자던 자리를 한참 봤다.', mood: 'sad', fri: -1, hap: -12 },
+      terrible: { t: ['다시는 볼 수 없다는 걸 알게 됐다.', '내가 조금만 더 챙겼더라면. 그 생각이 떠나지 않는다.'], mood: 'sad', fri: -2, hap: -18 },
+    },
+  },
+  {
     id: 'thunder', emoji: '⛈', title: '천둥', stat: 'hap', tone: 'bad',
     text: '하늘이 번쩍이더니 배 속까지 울리는 소리가 났다.',
     outcomes: {
@@ -497,7 +831,53 @@ export const CALM_CARDS = [
   { id: 'pigeon', emoji: '🕊', title: '비둘기 구경', text: '비둘기들이 뒤뚱거린다. 잡을 생각은 없다. 오늘은.', calm: { hap: 2, exp: 3 } },
   { id: 'stretch', emoji: '🙆', title: '기지개', text: '앞발을 쭉 뻗고 등을 늘인다. 뼈마디가 시원하다.', calm: { hp: 3, hap: 2 } },
   { id: 'moon', emoji: '🌕', title: '보름달', text: '달이 유난히 크다. 오늘 밤은 왠지 잠이 오지 않는다.', calm: { hap: 3, exp: 3 } },
+  { id: 'nap', emoji: '😴', title: '낮잠', text: '특별한 이유는 없다. 그냥 지금 자야 할 것 같다.', calm: { hp: 4, hap: 3 } },
+  { id: 'raindrop', emoji: '☔', title: '처마 밑', text: '처마 끝에서 물방울이 똑, 똑 떨어진다. 저 리듬이 좋다.', calm: { hap: 3, exp: 2 } },
+  { id: 'ant', emoji: '🐜', title: '개미 행렬', text: '개미들이 줄지어 어디론가 간다. 한참을 들여다봤다.', calm: { exp: 4 } },
+  { id: 'leaves', emoji: '🍂', title: '낙엽', text: '바람에 낙엽이 굴러간다. 저건 쫓아가야 하는 것이다.', calm: { hap: 4, abi: 1 } },
+  { id: 'bag', emoji: '🛍', title: '종이봉투', text: '봉투 속은 어둡고 조용하다. 세상에서 제일 안전한 곳 같다.', calm: { hap: 5 } },
+  { id: 'scratch', emoji: '🪵', title: '기둥 긁기', text: '나무 기둥에 발톱을 세우고 쭉 긁는다. 이건 참을 수 없다.', calm: { abi: 3, hap: 2 } },
+  { id: 'water', emoji: '💦', title: '물 마시기', text: '고인 물에 혀를 담근다. 내 얼굴이 흔들린다.', calm: { hp: 3 } },
+  { id: 'mirror', emoji: '🪞', title: '거울 속 고양이', text: '거기 있는 녀석은 나를 따라 한다. 오늘도 지지 않았다.', calm: { hap: 4, exp: 2 } },
+  { id: 'stars', emoji: '✨', title: '별', text: '지붕에 누워 하늘을 봤다. 저 점들은 도무지 잡을 수가 없다.', calm: { hap: 3, exp: 4 } },
+  { id: 'steps', emoji: '👣', title: '익숙한 발소리', text: '멀리서 들리는 저 발소리는 안다. 나쁜 사람은 아니다.', calm: { hap: 4 } },
+  { id: 'sneeze', emoji: '🤧', title: '재채기', text: '먼지가 코에 들어갔다. 온 골목이 놀랄 만큼 큰 소리가 났다.', calm: { hap: 2 } },
 ];
+
+// 엔딩 판정에 쓰는 사건 분류. 카드를 고칠 때 여기도 같이 채운다.
+export const CARD_TAG = {
+  // 사냥
+  butterfly: 'hunt', mouse: 'hunt', sparrow: 'hunt', frog: 'hunt', cicada: 'hunt',
+  // 먹을 것
+  fish: 'food', snack: 'food', feeder: 'food', bin: 'food', can: 'food',
+  festival: 'food', boat: 'food', hunger: 'food', badfood: 'food', poison: 'food',
+  // 사람
+  churu: 'human', lap: 'human', name: 'human', petting: 'human', fishmonger: 'human',
+  homeless: 'human', library: 'human', mailbox: 'human', broom: 'human', kids: 'human',
+  drunk: 'human', bath: 'human', moved: 'human', removed: 'human', construction: 'human',
+  // 고양이
+  friend: 'cat', kitten: 'cat', farewell: 'cat', fight: 'cat', rival: 'cat',
+  mother: 'cat', boss: 'cat', losskit: 'cat',
+  // 모험
+  roof: 'explore', lost: 'explore', truck: 'explore', warehouse: 'explore', garden: 'explore',
+  // 날씨
+  rain: 'weather', winter: 'weather', firstsnow: 'weather', typhoon: 'weather', thunder: 'weather',
+  ice: 'weather', monsoon: 'weather', heatwave: 'weather', puddle: 'weather', fogger: 'weather',
+  // 위험
+  dog: 'danger', car: 'danger', bird: 'danger', motorbike: 'danger', bike: 'danger',
+  glass: 'danger', weasel: 'danger', snare: 'danger', trap: 'danger', firework: 'danger',
+  // 쉼과 즐거움
+  sun: 'rest', toy: 'rest', blossom: 'rest', shelter: 'rest', bonnet: 'rest',
+  window: 'rest', rooftop: 'rest', vent: 'rest', catnip: 'rest',
+  // 몸
+  sick: 'body', flea: 'body',
+  // 보물
+  treasure: 'treasure', trial: 'treasure',
+};
+
+export function tagOf(cardId) {
+  return CARD_TAG[cardId] || null;
+}
 
 // 특수 카드
 export const EXTEND_CARD = {

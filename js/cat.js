@@ -1,59 +1,85 @@
-// 고양이 SVG. 부위를 나눠 그려서 표정과 자세를 코드로 조합한다.
+// 고양이 SVG. 손으로 그린 펜선 느낌 — 굵고 균일한 검정 아웃라인, 납작한 채색, 점 같은 눈.
+// 식빵 자세(앞발을 모으고 꼬리를 몸에 감은 모습)를 기본으로 하고 표정만 갈아 끼운다.
 // 외부 에셋을 쓰지 않으므로 라이선스 문제가 없다.
 
 const FACES = {
-  idle: `<path class="mouth" d="M96 118 q8 7 16 0" />
-         <circle class="eye" cx="82" cy="100" r="7"/><circle class="eye" cx="122" cy="100" r="7"/>
-         <circle class="glint" cx="84.5" cy="97.5" r="2.4"/><circle class="glint" cx="124.5" cy="97.5" r="2.4"/>`,
-  happy: `<path class="mouth" d="M92 116 q12 12 24 0" />
-          <path class="eye-line" d="M74 101 q8 -10 16 0"/><path class="eye-line" d="M114 101 q8 -10 16 0"/>`,
-  proud: `<path class="mouth" d="M90 114 q14 16 28 0" />
-          <path class="eye-line" d="M74 103 q8 -12 16 0"/><path class="eye-line" d="M114 103 q8 -12 16 0"/>
-          <path class="blush" d="M64 112 q6 5 12 0"/><path class="blush" d="M128 112 q6 5 12 0"/>`,
-  sad: `<path class="mouth" d="M94 122 q10 -8 20 0" />
-        <ellipse class="eye" cx="82" cy="102" rx="6.5" ry="8"/><ellipse class="eye" cx="122" cy="102" rx="6.5" ry="8"/>
-        <path class="brow" d="M72 88 q10 6 18 2"/><path class="brow" d="M132 88 q-10 6 -18 2"/>
-        <path class="tear" d="M76 110 q-3 10 3 14 q6 -4 3 -14"/>`,
-  scared: `<ellipse class="mouth-o" cx="104" cy="120" rx="7" ry="9"/>
-           <circle class="eye" cx="82" cy="100" r="9"/><circle class="eye" cx="122" cy="100" r="9"/>
-           <circle class="glint" cx="85" cy="97" r="2.6"/><circle class="glint" cx="125" cy="97" r="2.6"/>
-           <path class="brow" d="M70 84 q12 -4 20 2"/><path class="brow" d="M138 84 q-12 -4 -20 2"/>`,
-  hurt: `<path class="mouth" d="M94 122 q10 -9 20 0" />
-         <path class="eye-line" d="M74 96 l16 12"/><path class="eye-line" d="M90 96 l-16 12"/>
-         <path class="eye-line" d="M114 96 l16 12"/><path class="eye-line" d="M130 96 l-16 12"/>
-         <path class="bandage" d="M126 74 l22 12" />`,
+  idle: `
+    <circle class="eye" cx="86" cy="86" r="7"/>
+    <circle class="eye" cx="138" cy="86" r="7"/>
+    <path class="mouth" d="M104 106 q8 8 16 0"/>`,
+  happy: `
+    <path class="eye-line" d="M76 88 q10 -13 20 0"/>
+    <path class="eye-line" d="M128 88 q10 -13 20 0"/>
+    <path class="mouth" d="M104 104 q8 10 16 0"/>
+    <path class="blush" d="M62 98 q7 6 14 0"/>
+    <path class="blush" d="M148 98 q7 6 14 0"/>`,
+  proud: `
+    <path class="eye-line" d="M76 90 q10 -15 20 0"/>
+    <path class="eye-line" d="M128 90 q10 -15 20 0"/>
+    <path class="mouth mouth--open" d="M98 102 q14 18 28 0 z"/>
+    <path class="blush" d="M60 98 q8 7 16 0"/>
+    <path class="blush" d="M146 98 q8 7 16 0"/>`,
+  sad: `
+    <ellipse class="eye" cx="86" cy="88" rx="6.5" ry="8.5"/>
+    <ellipse class="eye" cx="138" cy="88" rx="6.5" ry="8.5"/>
+    <path class="brow" d="M72 70 q12 5 20 1"/>
+    <path class="brow" d="M152 70 q-12 5 -20 1"/>
+    <path class="mouth" d="M104 110 q8 -8 16 0"/>
+    <path class="tear" d="M79 98 q-4 12 3 16 q7 -5 3 -16"/>`,
+  scared: `
+    <circle class="eye" cx="86" cy="86" r="10"/>
+    <circle class="eye" cx="138" cy="86" r="10"/>
+    <circle class="glint" cx="89" cy="82" r="3"/>
+    <circle class="glint" cx="141" cy="82" r="3"/>
+    <path class="brow" d="M70 64 q13 -5 22 2"/>
+    <path class="brow" d="M154 64 q-13 -5 -22 2"/>
+    <ellipse class="mouth--o" cx="112" cy="108" rx="7" ry="9"/>
+    <path class="sweat" d="M166 74 q-5 11 2 15 q8 -4 3 -15"/>`,
+  hurt: `
+    <path class="eye-line" d="M78 79 l16 14"/><path class="eye-line" d="M94 79 l-16 14"/>
+    <path class="eye-line" d="M130 79 l16 14"/><path class="eye-line" d="M146 79 l-16 14"/>
+    <path class="mouth" d="M100 108 q6 -7 12 0 q6 7 12 0"/>
+    <g class="bandage">
+      <path d="M138 46 l26 14"/>
+      <path class="bandage-x" d="M146 44 l10 18"/>
+    </g>`,
 };
 
 export function catSVG({ stage, mood = 'idle' }) {
   const face = FACES[mood] || FACES.idle;
   const crown = stage.key === 'legend'
-    ? `<path class="crown" d="M78 58 l8 -20 l10 14 l8 -20 l8 20 l10 -14 l8 20 z"/>`
+    ? `<path class="crown" d="M74 24 l10 -22 l12 15 l12 -21 l12 21 l12 -15 l10 22 z"/>`
     : '';
   return `
-<svg class="cat cat--${mood}" viewBox="0 0 208 200" style="--cat-scale:${stage.scale}" aria-hidden="true">
+<svg class="cat cat--${mood}" viewBox="0 0 250 210" style="--cat-scale:${stage.scale}" aria-hidden="true">
+  <!-- 꼬리: 검정 굵은 선 위에 색을 덧그어 펜선처럼 만든다 -->
+  <path class="tail-ink" d="M186 172 C 232 166 240 96 196 84"/>
+  <path class="tail-fill" d="M186 172 C 232 166 240 96 196 84"/>
+
   <g class="cat-body">
-    <path class="tail" d="M168 150 q34 -6 26 -40 q-6 -24 -26 -14"/>
-    <ellipse class="body" cx="104" cy="152" rx="58" ry="42"/>
-    <path class="stripe" d="M74 130 q10 8 4 20"/>
-    <path class="stripe" d="M96 124 q10 9 4 22"/>
-    <path class="stripe" d="M118 126 q10 8 4 20"/>
-    <ellipse class="paw" cx="78" cy="186" rx="15" ry="9"/>
-    <ellipse class="paw" cx="130" cy="186" rx="15" ry="9"/>
+    <ellipse class="body" cx="118" cy="146" rx="92" ry="56"/>
+    <path class="belly" d="M64 176 q54 24 108 0 q-54 16 -108 0"/>
+    <ellipse class="paw" cx="92" cy="182" rx="32" ry="17"/>
+    <ellipse class="paw" cx="146" cy="182" rx="32" ry="17"/>
+    <path class="paw-line" d="M76 172 h34"/>
+    <path class="paw-line" d="M132 172 h34"/>
   </g>
+
   <g class="cat-head">
     ${crown}
-    <path class="ear" d="M62 74 l-6 -34 l32 16 z"/>
-    <path class="ear" d="M146 74 l6 -34 l-32 16 z"/>
-    <path class="ear-in" d="M66 68 l-3 -18 l17 8 z"/>
-    <path class="ear-in" d="M142 68 l3 -18 l-17 8 z"/>
-    <ellipse class="head" cx="104" cy="98" rx="52" ry="44"/>
-    <path class="stripe" d="M96 58 q8 8 16 0"/>
-    <ellipse class="muzzle" cx="104" cy="118" rx="24" ry="16"/>
-    <path class="nose" d="M99 110 h10 l-5 6 z"/>
+    <path class="ear" d="M56 56 q-8 -34 -4 -46 q24 6 44 26 z"/>
+    <path class="ear" d="M168 56 q8 -34 4 -46 q-24 6 -44 26 z"/>
+    <path class="ear-in" d="M62 46 q-5 -22 -3 -30 q15 5 28 19 z"/>
+    <path class="ear-in" d="M162 46 q5 -22 3 -30 q-15 5 -28 19 z"/>
+    <ellipse class="head" cx="112" cy="86" rx="68" ry="56"/>
+    <g class="brow-stripes">
+      <path d="M98 44 v14"/><path d="M112 41 v15"/><path d="M126 44 v14"/>
+    </g>
     ${face}
+    <path class="nose" d="M107 96 h10 l-5 6 z"/>
     <g class="whiskers">
-      <path d="M56 112 h-22"/><path d="M56 120 h-24"/>
-      <path d="M152 112 h22"/><path d="M152 120 h24"/>
+      <path d="M46 88 h-26"/><path d="M46 98 h-28"/>
+      <path d="M178 88 h26"/><path d="M178 98 h28"/>
     </g>
   </g>
 </svg>`;

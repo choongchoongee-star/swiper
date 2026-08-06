@@ -34,42 +34,56 @@ html, body {
 }
 [hidden] { display: none !important; }
 
-/* ---------- 고양이 ---------- */
+/* ---------- 고양이 (펜그림 스타일) ---------- */
 .cat {
-  width: min(58vw, 230px);
+  width: min(60vw, 240px);
   height: auto;
   transform: scale(var(--cat-scale, 1));
   transform-origin: bottom center;
   overflow: visible;
 }
-.cat .body, .cat .head, .cat .ear, .cat .tail, .cat .paw, .cat .muzzle {
-  fill: var(--orange); stroke: var(--ink); stroke-width: var(--line); stroke-linejoin: round;
+.cat .body, .cat .head, .cat .ear, .cat .paw {
+  fill: var(--fur, #f6b26b); stroke: var(--ink); stroke-width: 7;
+  stroke-linejoin: round; stroke-linecap: round;
 }
-.cat .muzzle { fill: #ffe9cf; }
-.cat .tail { fill: none; stroke-width: 16; stroke-linecap: round; }
-.cat .ear-in { fill: #f7b3a4; stroke: none; }
-.cat .stripe { fill: none; stroke: var(--orange-d); stroke-width: 6; stroke-linecap: round; }
+.cat .paw { fill: #fffdf8; }
+.cat .belly { fill: #fffdf8; stroke: none; }
+
+/* 꼬리는 검정 굵은 선 위에 색선을 덧그어 아웃라인을 만든다 */
+.cat .tail-ink, .cat .tail-fill { fill: none; stroke-linecap: round; }
+.cat .tail-ink { stroke: var(--ink); stroke-width: 42; }
+.cat .tail-fill { stroke: var(--fur, #f6b26b); stroke-width: 28; }
+
+.cat .ear-in { fill: #f7b8b0; stroke: none; }
+.cat .brow-stripes path {
+  fill: none; stroke: var(--orange-d); stroke-width: 6.5; stroke-linecap: round; opacity: .85;
+}
+.cat .paw-line { fill: none; stroke: var(--ink); stroke-width: 4.5; stroke-linecap: round; }
+
 .cat .eye { fill: var(--ink); }
 .cat .glint { fill: #fff; }
 .cat .eye-line, .cat .brow, .cat .mouth {
-  fill: none; stroke: var(--ink); stroke-width: 4.5; stroke-linecap: round;
+  fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round;
 }
-.cat .mouth-o { fill: #7a3b3b; stroke: var(--ink); stroke-width: 4; }
-.cat .nose { fill: #e0736b; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
-.cat .whiskers path { stroke: var(--ink); stroke-width: 3.5; fill: none; stroke-linecap: round; opacity: .8; }
-.cat .blush { fill: none; stroke: #ef8a7a; stroke-width: 4; stroke-linecap: round; }
-.cat .tear { fill: #8ecae6; stroke: var(--ink); stroke-width: 2.5; }
-.cat .bandage { stroke: #fff; stroke-width: 9; stroke-linecap: round; filter: drop-shadow(0 0 0 var(--ink)); }
-.cat .crown { fill: var(--gold); stroke: var(--ink); stroke-width: var(--line); stroke-linejoin: round; }
+.cat .mouth--open { fill: #d98a86; stroke: var(--ink); stroke-width: 5; }
+.cat .mouth--o { fill: #d98a86; stroke: var(--ink); stroke-width: 4.5; }
+.cat .nose { fill: #e88f92; stroke: var(--ink); stroke-width: 3.5; stroke-linejoin: round; }
+.cat .whiskers path { stroke: var(--ink); stroke-width: 3.5; fill: none; stroke-linecap: round; }
+.cat .blush { fill: none; stroke: #f09a92; stroke-width: 5; stroke-linecap: round; }
+.cat .tear, .cat .sweat { fill: #9ed2ea; stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.cat .bandage path { stroke: #fffdf8; stroke-width: 10; stroke-linecap: round; }
+.cat .bandage .bandage-x { stroke-width: 7; }
+.cat .crown { fill: var(--gold); stroke: var(--ink); stroke-width: 7; stroke-linejoin: round; }
 
-.cat-head { transform-origin: 104px 120px; animation: bob 2.6s ease-in-out infinite; }
-.cat .tail { animation: swish 2.2s ease-in-out infinite; transform-origin: 168px 150px; }
+.cat-head { transform-origin: 112px 140px; animation: bob 2.8s ease-in-out infinite; }
+.cat .tail-ink, .cat .tail-fill { transform-origin: 190px 150px; animation: swish 2.4s ease-in-out infinite; }
 @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
-@keyframes swish { 0%,100% { transform: rotate(0) } 50% { transform: rotate(-8deg) } }
+@keyframes swish { 0%,100% { transform: rotate(0) } 50% { transform: rotate(-5deg) } }
 
 .cat--proud .cat-head { animation: pop .5s ease; }
 .cat--scared { animation: shake .35s ease 2; }
 .cat--hurt { animation: shake .3s ease 3; }
+
 @keyframes pop { 0%,100% { transform: scale(1) } 40% { transform: scale(1.12) rotate(-4deg) } }
 @keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
 
@@ -93,7 +107,32 @@ h1 {
 .btn--ghost { background: transparent; box-shadow: 0 4px 0 rgba(43,29,20,.35); }
 
 .best { margin: 18px 0 0; font-weight: 800; }
-.dex { margin: 4px 0 0; font-size: 13px; opacity: .6; }
+.dex {
+  margin: 10px 0 0; font: inherit; font-size: 13px; font-weight: 800;
+  background: var(--paper); color: inherit; cursor: pointer;
+  border: 3px solid var(--ink); border-radius: 999px; padding: 7px 16px;
+  box-shadow: 0 3px 0 var(--ink);
+}
+.dex:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
+
+/* ---------- 엔딩 도감 ---------- */
+#dexview { justify-content: flex-start; padding-top: 5vh; overflow-y: auto; }
+.dex-title { margin: 0; font-size: 26px; }
+.dex-count { margin: 4px 0 16px; font-size: 13px; opacity: .6; font-weight: 800; }
+.dex-list {
+  list-style: none; padding: 0; margin: 0 0 20px;
+  width: min(440px, 92vw); display: flex; flex-direction: column; gap: 8px;
+}
+.dex-item {
+  display: flex; gap: 10px; align-items: center; text-align: left;
+  border: 3px solid var(--ink); border-radius: 14px; padding: 9px 12px;
+  background: rgba(255,253,248,.5); opacity: .55;
+}
+.dex-item.got { background: var(--paper); opacity: 1; }
+.dex-emoji { font-size: 24px; width: 30px; text-align: center; }
+.dex-item b { font-size: 14px; }
+.dex-item b small { font-weight: 700; opacity: .5; font-size: 11px; }
+.dex-item p { margin: 2px 0 0; font-size: 12px; opacity: .75; line-height: 1.5; }
 .recent { margin-top: 16px; width: min(340px, 88vw); font-size: 13px; }
 
 /* ---------- 랭킹 ---------- */
