@@ -170,7 +170,13 @@ h1 {
   background: rgba(255,253,248,.5); opacity: .55;
 }
 .dex-item.got { background: var(--paper); opacity: 1; }
-.dex-emoji { font-size: 24px; width: 30px; text-align: center; }
+.dex-emoji { font-size: 24px; width: 30px; text-align: center; flex: 0 0 auto; }
+.dex-art {
+  width: 46px; height: 46px; flex: 0 0 auto; object-fit: contain;
+  border-radius: 10px; background: rgba(43,29,20,.05);
+}
+.ending-art { width: min(56vw, 220px); height: auto; display: block; margin: 0 auto; }
+.ending-emoji { font-size: 64px; display: block; }
 .dex-item b { font-size: 14px; }
 .dex-item b small { font-weight: 700; opacity: .5; font-size: 11px; }
 .dex-item p { margin: 2px 0 0; font-size: 12px; opacity: .75; line-height: 1.5; }

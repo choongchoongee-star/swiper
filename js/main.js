@@ -55,6 +55,24 @@ function collected(data) {
   return data.endings.filter((e) => !e.startsWith('death'));
 }
 
+// 엔딩 그림은 있으면 쓰고, 없으면 이모지로 둔다.
+// assets/endings/<엔딩 id>.png 를 한 장씩 넣는 대로 반영된다.
+function endingArt(ending, cls) {
+  return `<img class="${cls}" src="assets/endings/${ending.id}.png"
+    alt="" loading="lazy" data-emoji="${ending.emoji}">`;
+}
+
+function wireArtFallback(root) {
+  root.querySelectorAll('img[data-emoji]').forEach((img) => {
+    img.addEventListener('error', () => {
+      const span = document.createElement('span');
+      span.className = img.className.replace('-art', '-emoji');
+      span.textContent = img.dataset.emoji;
+      img.replaceWith(span);
+    }, { once: true });
+  });
+}
+
 // 모은 엔딩은 그대로, 못 본 엔딩은 물음표로 보여준다.
 function renderDex() {
   const data = load();
@@ -63,7 +81,7 @@ function renderDex() {
   $('#dex-list').innerHTML = DEX.map((e, i) => {
     if (have.has(e.id)) {
       return `<li class="dex-item got">
-        <span class="dex-emoji">${e.emoji}</span>
+        ${endingArt(e, 'dex-art')}
         <div><b>${e.name}</b><p>${e.desc}</p></div>
       </li>`;
     }
@@ -72,6 +90,7 @@ function renderDex() {
       <div><b>??? <small>No.${String(i + 1).padStart(2, '0')}</small></b><p>아직 만나지 못한 삶.</p></div>
     </li>`;
   }).join('');
+  wireArtFallback($('#dex-list'));
   show('dexview');
 }
 
@@ -303,13 +322,21 @@ function finish() {
     .join('') || '<li class="high"><span>🐾</span><div><b>평온한 삶</b><p>크게 좋을 것도, 나쁠 것도 없는 하루하루였다.</p></div></li>';
 
   $('#ending-body').innerHTML = `
-    <div class="ending-cat">${catSVG({ stage: stageOf(state), mood: state.dead ? 'sad' : 'proud' })}</div>
+    <div class="ending-cat">${endingArt(ending, 'ending-art')}</div>
     <div class="ending-name">${ending.emoji} ${ending.name}</div>
     <p class="ending-desc">${ending.desc}</p>
     <div class="ending-score">${score.toLocaleString()}<small>점</small></div>
     <p class="ending-meta">${state.index}장의 인생 · ${stageOf(state).name}${data.best && score <= data.best ? ` · 최고 ${data.best.toLocaleString()}점` : ' · 🎉 최고 기록!'}</p>
     <h3>기억에 남는 순간</h3>
     <ul class="highs">${highs}</ul>`;
+
+  // 엔딩 그림이 아직 없으면 고양이 그림으로 대신한다.
+  const art = $('#ending-body .ending-art');
+  if (art) {
+    art.addEventListener('error', () => {
+      art.outerHTML = catSVG({ stage: stageOf(state), mood: state.dead ? 'sad' : 'proud' });
+    }, { once: true });
+  }
 
   renderSubmit(score);
   show('ending');
