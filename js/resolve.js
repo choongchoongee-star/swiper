@@ -32,9 +32,9 @@ export function probabilities(state, card) {
     p.terrible += (fromGreat + fromGood) * 0.3;
   }
 
-  // 동료가 많으면 최악의 일은 덜 일어난다.
-  const friBonus = clamp(state.fri * 0.02, 0, 0.15);
-  const cut = p.terrible * friBonus;
+  // 곁을 지켜준 고양이가 많을수록 최악의 일은 덜 일어난다.
+  const friends = state.tagCounts?.cat || 0;
+  const cut = p.terrible * clamp(friends * 0.012, 0, 0.15);
   p.terrible -= cut;
   p.good += cut;
 

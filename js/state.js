@@ -15,10 +15,11 @@ const HP_MAX = 120;
 const DAMAGE_MUL = 0.72;
 const HEAL_MUL = 1.3;
 const HUNGER_EVERY = 2; // 이 장수마다 체력 1 감소
+const FRIEND_TO_HAP = 7; // 카드에 적힌 '동료 1'이 행복 몇 만큼인지
 
 export function createState() {
   return {
-    hp: HP_START, hap: 30, abi: 10, fri: 0, exp: 0,
+    hp: HP_START, hap: 30, abi: 10, exp: 0,
     bonusScore: 0,
     greatCount: 0,
     terribleCount: 0,
@@ -45,25 +46,24 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 // 결과 효과를 상태에 반영하고, 실제로 변한 양을 돌려준다(연출용).
 export function applyEffect(state, eff) {
-  const before = { hp: state.hp, hap: state.hap, abi: state.abi, fri: state.fri, exp: state.exp };
+  const before = { hp: state.hp, hap: state.hap, abi: state.abi, exp: state.exp };
   if (eff.hpHalf) state.hp = Math.floor(state.hp / 2);
   if (eff.hp) state.hp += eff.hp > 0 ? eff.hp * HEAL_MUL : eff.hp * DAMAGE_MUL;
   if (eff.hap) state.hap += eff.hap;
   if (eff.abi) state.abi += eff.abi;
-  if (eff.fri) state.fri += eff.fri;
   if (eff.exp) state.exp += eff.exp;
+  // 친구가 생기고 잃는 일은 행복으로 들어간다. 스탯을 넷으로 줄이면서 흡수했다.
+  if (eff.fri) state.hap += eff.fri * FRIEND_TO_HAP;
   if (eff.score) state.bonusScore += eff.score;
 
   state.hp = Math.round(clamp(state.hp, 0, HP_MAX));
   state.hap = Math.max(0, state.hap);
   state.abi = Math.max(0, state.abi);
-  state.fri = Math.max(0, state.fri);
 
   return {
     hp: state.hp - before.hp,
     hap: state.hap - before.hap,
     abi: state.abi - before.abi,
-    fri: state.fri - before.fri,
     exp: state.exp - before.exp,
     score: eff.score || 0,
   };
@@ -79,7 +79,6 @@ export function computeScore(state) {
     state.exp * 3 +
     state.hap * 2 +
     state.abi * 2 +
-    state.fri * 20 +
     state.hp * 1 +
     state.greatCount * 100 +
     state.bonusScore +

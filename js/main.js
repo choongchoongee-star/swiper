@@ -22,7 +22,6 @@ const STAT_META = {
   hp: { icon: '❤️', name: '체력', gain: 6, desc: '0이 되면 그 자리에서 삶이 끝난다. 두 장마다 1씩 준다.' },
   hap: { icon: '😊', name: '행복', gain: 12, desc: '사람과 햇볕, 다정한 순간으로 쌓인다.' },
   abi: { icon: '🪶', name: '능력', gain: 5, desc: '사냥과 위기 회피의 성공 확률을 올린다.' },
-  fri: { icon: '😺', name: '동료', gain: 1, desc: '곁을 지켜주는 고양이. 최악의 결과가 날 확률을 낮춘다.' },
   exp: { icon: '✨', name: '경험치', gain: 20, desc: '성장 단계를 앞당기고 점수에서 가장 큰 몫을 차지한다.' },
 };
 
@@ -183,8 +182,8 @@ function renderHud() {
   els.progress.textContent = `${Math.min(state.index + 1, state.total)} / ${state.total}`;
   els.score.textContent = computeScore(state).toLocaleString();
   els.stats.innerHTML = [
-    ['❤️', state.hp, 'hp'], ['😊', state.hap, 'hap'], ['🪶', state.abi, 'abi'],
-    ['😺', state.fri, 'fri'], ['✨', state.exp, 'exp'],
+    ['❤️', state.hp, 'hp'], ['😊', state.hap, 'hap'],
+    ['🪶', state.abi, 'abi'], ['✨', state.exp, 'exp'],
   ].map(([icon, v, k]) => `<span class="stat stat--${k}"><i>${icon}</i>${v}</span>`).join('');
   document.body.style.setProperty('--tint', stageOf(state).tint);
 }
@@ -320,8 +319,8 @@ function buzz(ms) {
 
 function showResult({ label, tier, text, delta, mood }) {
   const chips = [
-    ['❤️', delta.hp], ['😊', delta.hap], ['🪶', delta.abi],
-    ['😺', delta.fri], ['✨', delta.exp], ['💰', delta.score],
+    ['❤️', delta.hp], ['😊', delta.hap],
+    ['🪶', delta.abi], ['✨', delta.exp], ['💰', delta.score],
   ].filter(([, v]) => v)
     .map(([i, v]) => `<span class="chip ${v > 0 ? 'up' : 'down'}">${i} ${v > 0 ? '+' : ''}${v}</span>`)
     .join('');

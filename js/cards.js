@@ -135,7 +135,7 @@ const GOOD_ALL = [
     text: '나보다 작은 녀석이 혼자 울고 있다. 배가 고픈 모양이다.',
     choices: [
       {
-        label: '돌봐준다', lean: { stat: 'fri', tag: 'cat' },
+        label: '돌봐준다', lean: { stat: 'hap', tag: 'cat' },
         outcomes: {
           great: { t: ['내 몫을 나눠줬다. 이제 이 녀석은 내 뒤를 졸졸 따라다닌다.', '밤새 곁을 지켜줬다. 아침에 녀석이 내 품에서 자고 있었다.'], mood: 'proud', fri: 2, hap: 14 },
           good: { t: '먹을 걸 조금 나눠줬다. 마음이 이상하게 따뜻하다.', mood: 'happy', fri: 1, hap: 7 },
@@ -433,7 +433,7 @@ const GOOD_ALL = [
     text: '겨우 얻은 밥이다. 그런데 옆에서 마른 고양이가 나를 본다.',
     choices: [
       {
-        label: '나눠준다', lean: { stat: 'fri', tag: 'cat' },
+        label: '나눠준다', lean: { stat: 'hap', tag: 'cat' },
         outcomes: {
           great: { t: ['둘이 나눠 먹었다. 그날 이후 그 녀석은 늘 내 곁에 있었다.', '나눠줬더니 다음 날 그 녀석이 생선을 물고 왔다.'], mood: 'proud', fri: 2, hap: 14 },
           terrible: { t: ['다 내주고 나니 정작 내가 굶었다.', '먹을 것만 챙기고 뒤도 안 돌아보고 가버렸다.'], mood: 'sad', hp: -12, hap: -6 },

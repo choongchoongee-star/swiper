@@ -6,9 +6,9 @@
 // 사건으로 결정되는 특별 엔딩을 먼저 보고, 없으면 스탯과 점수로 정한다.
 
 // 완주 기록의 중앙값. 스탯 간 크기가 달라서 비율로 비교해야 공평하다.
-const MED = { hap: 156, exp: 257, abi: 64, hp: 75, fri: 5 };
-const SCORE_HIGH = 4890;
-const SCORE_LOW = 4210;
+const MED = { hap: 159, exp: 255, abi: 64, hp: 76 };
+const SCORE_HIGH = 4730;
+const SCORE_LOW = 4070;
 
 export function buildContext(state, score) {
   const ratios = {
@@ -16,7 +16,6 @@ export function buildContext(state, score) {
     hap: state.hap / MED.hap,
     exp: state.exp / MED.exp,
     hp: state.hp / MED.hp,
-    fri: state.fri / MED.fri,
   };
   const dom = Object.keys(ratios).reduce((a, b) => (ratios[a] >= ratios[b] ? a : b));
   const tier = score >= SCORE_HIGH ? 'high' : score < SCORE_LOW ? 'low' : 'mid';
@@ -42,8 +41,20 @@ export const ENDINGS = [
     hint: '사람과 얽힌 일을 아주 많이 겪고, 행복을 평균 이상으로 지키기',
     test: (s, c) => c.tag('human') >= 22 && c.ratios.hap >= 1 },
   { id: 'clanlord', emoji: '👑', name: '골목 고양이들의 왕', desc: '싸움으로 얻은 자리가 아니었다. 다들 그저 너를 따랐다.',
-    hint: '다른 고양이와 얽힌 일을 아주 많이 겪고, 낮지 않은 점수로 완주하기',
-    test: (s, c) => c.tag('cat') >= 12 && c.tier !== 'low' },
+    hint: '다른 고양이와 얽힌 일을 아주 많이 겪고, 높은 점수로 완주하기',
+    test: (s, c) => c.tag('cat') >= 13 && c.tier === 'high' },
+  { id: 'mourner', emoji: '💔', name: '많은 이별을 겪은 고양이', desc: '곁에 있던 얼굴들을 하나씩 떠나보내고도, 너는 계속 걸었다.',
+    hint: '고양이와 얽힌 일을 많이 겪되, 대실패도 그만큼 많이 겪기',
+    test: (s, c) => c.tag('cat') >= 11 && c.terrible >= 12 },
+  { id: 'chief', emoji: '🫱', name: '골목의 대장', desc: '네 뒤에는 늘 몇 마리가 따라다녔다.',
+    hint: '갈림길에서 늘 곁을 지키는 쪽을 골라, 고양이와 얽힌 일을 최대한 많이 겪기',
+    test: (s, c) => c.tag('cat') >= 13 },
+  { id: 'neighbor', emoji: '😺', name: '다정한 이웃', desc: '누구와도 잘 지냈고, 누구도 너를 미워하지 않았다.',
+    hint: '고양이와 얽힌 일을 많이 겪기 — 아기 고양이나 밥그릇 앞에서 나누는 쪽으로',
+    test: (s, c) => c.tag('cat') >= 12 },
+  { id: 'companion', emoji: '🐈', name: '조용한 동행', desc: '말수는 적었지만, 곁을 지킬 줄 아는 고양이였다.',
+    hint: '고양이와 얽힌 일을 평균보다 조금 더 겪기',
+    test: (s, c) => c.tag('cat') >= 11 },
   { id: 'explorer', emoji: '🗺', name: '방랑하는 탐험가', desc: '골목의 끝이 어디인지 확인해본 유일한 고양이였다.',
     hint: '낯선 곳으로 가는 선택을 반복하기',
     test: (s, c) => c.tag('explore') >= 9 },
@@ -65,22 +76,19 @@ export const ENDINGS = [
   { id: 'mascot', emoji: '🎀', name: '동네 마스코트', desc: '골목을 지나는 사람마다 네 이름을 한 번씩 불렀다.',
     hint: '사람과 얽힌 일을 많이 겪고, 행복을 가장 높게 키우기',
     test: (s, c) => c.tag('human') >= 21 && c.dom === 'hap' },
-  { id: 'mourner', emoji: '💔', name: '많은 이별을 겪은 고양이', desc: '곁에 있던 얼굴들을 하나씩 떠나보내고도, 너는 계속 걸었다.',
-    hint: '고양이와 얽힌 일을 많이 겪되, 대실패도 그만큼 많이 겪기',
-    test: (s, c) => c.tag('cat') >= 11 && c.terrible >= 12 },
   { id: 'homebody', emoji: '🏠', name: '창가의 고양이', desc: '멀리 가지 않았다. 좋은 자리를 아는 것도 능력이다.',
     hint: '모험 대신 쉬는 쪽을 거의 매번 고르기',
-    test: (s, c) => c.tag('rest') >= 24 },
+    test: (s, c) => c.tag('rest') >= 21 },
   { id: 'loner', emoji: '🌙', name: '혼자 자는 고양이', desc: '품은 그리웠지만, 결국 혼자가 편했다.',
-    hint: '동료를 한 마리도 만들지 않은 채, 사람과도 거의 얽히지 않기',
-    test: (s, c) => s.fri === 0 && c.tag('human') <= 16 },
+    hint: '고양이와도 사람과도 거의 얽히지 않고 혼자 지내기',
+    test: (s, c) => c.tag('cat') <= 7 && c.tag('human') <= 16 },
 
   // --- 어느 쪽으로도 치우치지 않은 삶 ---
   { id: 'ordinary', emoji: '🌤', name: '평범하지만 좋은 삶', desc: '특별할 것 없었지만, 나쁘지 않았다.',
     hint: '어느 한쪽으로도 치우치지 않게, 다섯 성향을 고르게 키우기',
     test: (s, c) => {
       const v = Object.values(c.ratios);
-      return Math.max(...v) / Math.max(0.01, Math.min(...v)) < 2.2;
+      return Math.max(...v) / Math.max(0.01, Math.min(...v)) < 1.55;
     } },
   { id: 'survivor', emoji: '🌱', name: '그래도 살아남은 고양이', desc: '대단할 건 없었다. 끝까지 버텼다는 것만으로 충분하다.',
     hint: '점수는 낮지만 대실패를 열 번 넘게 겪고도 완주하기',
@@ -107,15 +115,6 @@ export const ENDINGS = [
     hint: '😊 행복을 가장 높게 키우되, 점수는 낮게 끝내기',
     test: (s, c) => c.dom === 'hap' },
 
-  { id: 'chief', emoji: '🫱', name: '골목의 대장', desc: '네 뒤에는 늘 몇 마리가 따라다녔다.',
-    hint: '😺 동료를 가장 높게 키우고, 높은 점수로 완주하기',
-    test: (s, c) => c.dom === 'fri' && c.tier === 'high' },
-  { id: 'neighbor', emoji: '😺', name: '다정한 이웃', desc: '누구와도 잘 지냈고, 누구도 너를 미워하지 않았다.',
-    hint: '😺 동료를 가장 높게 키우고, 보통 점수로 완주하기',
-    test: (s, c) => c.dom === 'fri' && c.tier === 'mid' },
-  { id: 'companion', emoji: '🐈', name: '조용한 동행', desc: '말수는 적었지만, 곁을 지킬 줄 아는 고양이였다.',
-    hint: '😺 동료를 가장 높게 키우되, 점수는 낮게 끝내기',
-    test: (s, c) => c.dom === 'fri' },
 
   { id: 'chronicle', emoji: '📜', name: '골목의 산증인', desc: '이 동네에서 일어난 일 중 네가 모르는 것은 없었다.',
     hint: '✨ 경험치를 가장 높게 키우고, 높은 점수로 완주하기',
