@@ -61,11 +61,13 @@ export function buildDeck(length = 130) {
   // 특수 카드 삽입
   const inserts = [];
 
-  // 선택 분기 카드는 한 판에 네 번만. 조작에 익숙해지도록 첫 12장에는 넣지 않는다.
-  const choicePool = shuffled(CHOICE_CARDS);
-  const span = Math.max(1, Math.floor((length - 16) / 4));
-  for (let i = 0; i < 4 && i < choicePool.length; i++) {
-    inserts.push({ at: 12 + i * span + Math.floor(Math.random() * span), card: choicePool[i] });
+  // 선택 분기 카드는 열 장에 한 번쯤. 조작에 익숙해지도록 첫 8장에는 넣지 않는다.
+  const count = Math.max(3, Math.round((length - 8) / 10));
+  const span = Math.max(1, Math.floor((length - 10) / count));
+  let bag = [];
+  for (let i = 0; i < count; i++) {
+    if (!bag.length) bag = shuffled(CHOICE_CARDS);
+    inserts.push({ at: 8 + i * span + Math.floor(Math.random() * span), card: bag.shift() });
   }
 
   for (const at of [20, 45, 70, 90]) {

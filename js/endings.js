@@ -6,9 +6,9 @@
 // 사건으로 결정되는 특별 엔딩을 먼저 보고, 없으면 스탯과 점수로 정한다.
 
 // 완주 기록의 중앙값. 스탯 간 크기가 달라서 비율로 비교해야 공평하다.
-const MED = { hap: 126, exp: 185, abi: 41, hp: 69, fri: 4 };
-const SCORE_HIGH = 3800;
-const SCORE_LOW = 3200;
+const MED = { hap: 139, exp: 238, abi: 51, hp: 66, fri: 4 };
+const SCORE_HIGH = 4600;
+const SCORE_LOW = 4000;
 
 export function buildContext(state, score) {
   const ratios = {
@@ -49,7 +49,7 @@ export const ENDINGS = [
   { id: 'lucky', emoji: '🍀', name: '타고난 행운아', desc: '무슨 일을 해도 이상하게 잘 풀렸다. 그것도 재능이다.',
     test: (s, c) => c.great >= 18 },
   { id: 'treasurer', emoji: '💰', name: '보물 사냥꾼', desc: '반짝이는 것을 알아보는 눈, 그건 아무나 갖는 게 아니다.',
-    test: (s, c) => c.tag('treasure') >= 5 && c.tier === 'high' },
+    test: (s, c) => c.tag('treasure') >= 4 && c.tier === 'high' },
   { id: 'nightking', emoji: '🌃', name: '밤의 지배자', desc: '위험한 밤을 그렇게 많이 지나고도 너는 멀쩡했다.',
     test: (s, c) => c.tag('danger') >= 14 },
   { id: 'mascot', emoji: '🎀', name: '동네 마스코트', desc: '골목을 지나는 사람마다 네 이름을 한 번씩 불렀다.',
