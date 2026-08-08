@@ -61,7 +61,7 @@ const GOOD_ALL = [
     text: '노란 나비가 눈앞에서 팔랑거린다. 사냥 본능이 깨어난다.',
     choices: [
       {
-        label: '덮친다',
+        label: '덮친다', lean: { stat: 'abi', tag: 'hunt' },
         outcomes: {
           great: { t: ['단번에 앞발로 잡았다! ...그리고 놓아줬다. 나는 관대하니까.', '두 발로 서서 낚아챘다. 오늘의 나는 완벽했다.'], mood: 'proud', exp: 20, abi: 5 },
           good: { t: '한참을 쫓아다녔다. 사냥은 못 했지만 재밌었다.', mood: 'happy', exp: 12 },
@@ -70,7 +70,7 @@ const GOOD_ALL = [
         },
       },
       {
-        label: '지켜본다',
+        label: '지켜본다', lean: { stat: 'hap', tag: 'rest' },
         outcomes: {
           great: { t: ['가만히 있었더니 나비가 내 코에 앉았다. 이런 날도 있구나.', '숨죽인 채 한참을 봤다. 세상이 아주 조용해졌다.'], mood: 'proud', exp: 20, abi: 5 },
           good: { t: '꼬리만 살랑이며 오래 구경했다. 이것도 사냥이다.', mood: 'happy', exp: 12 },
@@ -135,7 +135,7 @@ const GOOD_ALL = [
     text: '나보다 작은 녀석이 혼자 울고 있다. 배가 고픈 모양이다.',
     choices: [
       {
-        label: '돌봐준다',
+        label: '돌봐준다', lean: { stat: 'fri', tag: 'cat' },
         outcomes: {
           great: { t: ['내 몫을 나눠줬다. 이제 이 녀석은 내 뒤를 졸졸 따라다닌다.', '밤새 곁을 지켜줬다. 아침에 녀석이 내 품에서 자고 있었다.'], mood: 'proud', fri: 2, hap: 14 },
           good: { t: '먹을 걸 조금 나눠줬다. 마음이 이상하게 따뜻하다.', mood: 'happy', fri: 1, hap: 7 },
@@ -144,7 +144,7 @@ const GOOD_ALL = [
         },
       },
       {
-        label: '지나친다',
+        label: '지나친다', lean: { stat: 'hp', tag: 'rest' },
         outcomes: {
           great: { t: ['멀리서 지켜봤더니 어미가 돌아왔다. 잘된 일이다.', '내가 나설 일이 아니었다. 녀석은 씩씩하게 걸어갔다.'], mood: 'happy', fri: 2, hap: 14 },
           good: { t: '가던 길을 갔다. 각자의 삶이 있는 거니까.', mood: 'idle', fri: 1, hap: 7 },
@@ -329,7 +329,7 @@ const GOOD_ALL = [
     text: '짐칸 문이 열려 있다. 저기 올라가면 어디까지 갈 수 있을까.',
     choices: [
       {
-        label: '올라탄다',
+        label: '올라탄다', lean: { stat: 'exp', tag: 'explore' },
         outcomes: {
           great: { t: ['시장 한복판에 내렸다. 오늘은 잔칫날이다.', '바람을 맞으며 동네를 한 바퀴 돌았다. 최고의 여행이었다.'], mood: 'proud', exp: 22, hap: 10 },
           good: { t: '두 골목쯤 가서 내렸다. 새로운 냄새가 가득하다.', mood: 'happy', exp: 12 },
@@ -338,7 +338,7 @@ const GOOD_ALL = [
         },
       },
       {
-        label: '보낸다',
+        label: '보낸다', lean: { stat: 'hp', tag: 'rest' },
         outcomes: {
           great: { t: ['트럭이 떠난 자리에 생선 상자가 남아 있었다.', '가지 않기로 한 게 옳았다. 그날 저녁 좋은 일이 있었다.'], mood: 'proud', exp: 22, hap: 10 },
           good: { t: '멀어지는 트럭을 한참 봤다. 나는 여기가 좋다.', mood: 'happy', exp: 12 },
@@ -429,6 +429,66 @@ const GOOD_ALL = [
     },
   },
   {
+    id: 'sharebowl', emoji: '🍚', title: '하나뿐인 밥그릇', stat: 'fri', tone: 'good',
+    text: '겨우 얻은 밥이다. 그런데 옆에서 마른 고양이가 나를 본다.',
+    choices: [
+      {
+        label: '나눠준다', lean: { stat: 'fri', tag: 'cat' },
+        outcomes: {
+          great: { t: ['둘이 나눠 먹었다. 그날 이후 그 녀석은 늘 내 곁에 있었다.', '나눠줬더니 다음 날 그 녀석이 생선을 물고 왔다.'], mood: 'proud', fri: 2, hap: 14 },
+          terrible: { t: ['다 내주고 나니 정작 내가 굶었다.', '먹을 것만 챙기고 뒤도 안 돌아보고 가버렸다.'], mood: 'sad', hp: -12, hap: -6 },
+        },
+      },
+      {
+        label: '혼자 먹는다', lean: { stat: 'hp', tag: 'food' },
+        outcomes: {
+          great: { t: ['한 톨도 남기지 않고 먹었다. 오늘만큼은 배가 부르다.', '든든하게 먹어두니 며칠은 버틸 수 있을 것 같다.'], mood: 'proud', hp: 20, hap: 4 },
+          terrible: { t: ['혼자 먹는 내내 그 눈빛이 자꾸 떠올랐다.', '급하게 먹다 체했다. 하루 종일 속이 안 좋다.'], mood: 'sad', hp: -8, hap: -10 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'alley', emoji: '🌫', title: '낯선 골목', stat: 'abi', tone: 'good',
+    text: '한 번도 가본 적 없는 골목이다. 안쪽에서 낯선 냄새가 흘러나온다.',
+    choices: [
+      {
+        label: '들어간다', lean: { stat: 'exp', tag: 'explore' },
+        outcomes: {
+          great: { t: ['아무도 모르는 지름길을 찾아냈다. 내 세상이 넓어졌다.', '골목 끝에 아무도 손대지 않은 급식소가 있었다.'], mood: 'proud', exp: 24, abi: 6 },
+          terrible: { t: ['막다른 길이었고, 뒤에서 뭔가 다가왔다.', '한참을 헤매다 겨우 빠져나왔다. 발바닥이 다 까졌다.'], mood: 'hurt', hp: -14 },
+        },
+      },
+      {
+        label: '돌아간다', lean: { stat: 'hp', tag: 'rest' },
+        outcomes: {
+          great: { t: ['익숙한 자리로 돌아와 편히 잤다. 모험만이 답은 아니다.', '돌아오는 길에 따뜻한 자리를 새로 찾았다.'], mood: 'happy', hp: 16, hap: 8 },
+          terrible: { t: ['돌아서는 순간 뒤통수가 계속 신경 쓰였다.', '괜히 미련이 남아 밤새 뒤척였다.'], mood: 'sad', hap: -10, hp: -4 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'nest', emoji: '🪹', title: '새 둥지', stat: 'abi', tone: 'good',
+    text: '나무 위 둥지에서 소리가 난다. 올라가면 닿을 것 같기도 하다.',
+    choices: [
+      {
+        label: '노린다', lean: { stat: 'abi', tag: 'hunt' },
+        outcomes: {
+          great: { t: ['조용히 다가가 단번에 낚아챘다. 사냥꾼의 하루였다.', '나무를 오르는 요령까지 익혔다. 오늘의 나는 완벽했다.'], mood: 'proud', abi: 14, exp: 14 },
+          terrible: { t: ['어미 새가 달려들어 머리를 쪼였다.', '가지가 부러져 그대로 떨어졌다.'], mood: 'hurt', hp: -15 },
+        },
+      },
+      {
+        label: '내버려둔다', lean: { stat: 'hap', tag: 'rest' },
+        outcomes: {
+          great: { t: ['나무 아래 누워 새소리를 들었다. 이런 오후도 나쁘지 않다.', '지켜만 봤더니 어미 새가 나를 경계하지 않게 되었다.'], mood: 'happy', hap: 16, exp: 6 },
+          terrible: { t: ['배고픔을 참은 대가로 하루 종일 기운이 없었다.', '망설이는 사이 다른 고양이가 둥지를 차지했다.'], mood: 'sad', hp: -10, hap: -6 },
+        },
+      },
+    ],
+  },
+  {
     id: 'rooftop', emoji: '🌇', title: '노을', stat: 'hap', tone: 'good',
     text: '지붕 끝에 앉으니 하늘이 온통 주황색이다.',
     outcomes: {
@@ -456,7 +516,7 @@ const BAD_ALL = [
     text: '큰 개가 나를 노려본다. 목줄이... 없다.',
     choices: [
       {
-        label: '도망친다',
+        label: '도망친다', lean: { stat: 'abi', tag: 'danger' },
         outcomes: {
           great: { t: ['담을 세 번 넘어 완벽하게 따돌렸다. 다리가 이렇게 빨랐나?', '좁은 틈으로 쏙 들어갔다. 개는 들어올 수 없는 곳이다.'], mood: 'proud', exp: 18, abi: 4 },
           good: { t: '간신히 나무 위로 올라갔다. 심장이 뛴다.', mood: 'scared', hp: -3 },
@@ -465,7 +525,7 @@ const BAD_ALL = [
         },
       },
       {
-        label: '맞선다',
+        label: '맞선다', lean: { stat: 'exp', tag: 'danger' },
         outcomes: {
           great: { t: ['등을 세우고 하악질했더니 개가 먼저 물러섰다. 내가 이겼다.', '코를 정확히 한 대 쳤다. 개가 깨갱거리며 달아났다.'], mood: 'proud', exp: 18, abi: 4 },
           good: { t: '노려보는 사이 주인이 개를 데려갔다.', mood: 'scared', hp: -3 },

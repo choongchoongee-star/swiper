@@ -47,8 +47,17 @@
     <div id="card" class="card"></div>
   </main>
 
-  <div id="stats" class="stats"></div>
-  <p id="hint" class="hint">위로 스와이프</p>
+  <div class="stats-row">
+    <div id="stats" class="stats"></div>
+    <button id="help" class="help-btn" title="성향이란?">?</button>
+  </div>
+  <div class="hint-row">
+    <p id="hint" class="hint">위로 스와이프</p>
+    <button id="auto" class="auto-btn" hidden></button>
+  </div>
+
+  <div id="helpsheet" class="helpsheet" hidden></div>
+  <div id="toast" class="toast" hidden></div>
 
   <div id="result" class="result"></div>
   <div id="stage-banner" class="stage-banner"></div>

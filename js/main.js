@@ -4,7 +4,7 @@ import { roll, rollExtreme, TIER_LABEL } from './resolve.js';
 import { catSVG, probeAssets } from './cat.js';
 import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
 import { tagOf, cardById } from './cards.js';
-import { load, recordEnding, submitScore, wouldRank, saveRun, loadRun, clearRun } from './storage.js';
+import { load, recordEnding, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen } from './storage.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -15,7 +15,21 @@ const els = {
   hint: $('#hint'),
 };
 
+// 선택 한 번이 성향에 더해주는 양.
+// 스탯마다 자라는 규모가 달라서(동료는 한 자릿수, 경험치는 세 자릿수) 각자의 크기에 맞춰 잡았다.
+// 한 판에 여덟 번쯤 나오므로 꾸준히 한쪽만 고르면 그 성향이 확실히 앞선다.
+const STAT_META = {
+  hp: { icon: '❤️', name: '체력', gain: 6, desc: '0이 되면 그 자리에서 삶이 끝난다. 두 장마다 1씩 준다.' },
+  hap: { icon: '😊', name: '행복', gain: 12, desc: '사람과 햇볕, 다정한 순간으로 쌓인다.' },
+  abi: { icon: '🪶', name: '능력', gain: 5, desc: '사냥과 위기 회피의 성공 확률을 올린다.' },
+  fri: { icon: '😺', name: '동료', gain: 1, desc: '곁을 지켜주는 고양이. 최악의 결과가 날 확률을 낮춘다.' },
+  exp: { icon: '✨', name: '경험치', gain: 20, desc: '성장 단계를 앞당기고 점수에서 가장 큰 몫을 차지한다.' },
+};
+
+const AUTO_INTERVAL = 2000;
+
 let deck, state, current, busy = false, resultOpen = false;
+let autoTimer = null;
 let lastRun = null; // 엔딩 화면에서 랭킹 등록에 쓸 결과
 
 function show(name) {
@@ -82,12 +96,14 @@ function renderDex() {
     if (have.has(e.id)) {
       return `<li class="dex-item got">
         ${endingArt(e, 'dex-art')}
-        <div><b>${e.name}</b><p>${e.desc}</p></div>
+        <div><b>${e.name}</b><p>${e.desc}</p>
+        ${e.hint ? `<p class="dex-hint">조건 · ${e.hint}</p>` : ''}</div>
       </li>`;
     }
     return `<li class="dex-item">
       <span class="dex-emoji">❔</span>
-      <div><b>??? <small>No.${String(i + 1).padStart(2, '0')}</small></b><p>아직 만나지 못한 삶.</p></div>
+      <div><b>??? <small>No.${String(i + 1).padStart(2, '0')}</small></b>
+      <p class="dex-hint">힌트 · ${e.hint || '아직 만나지 못한 삶.'}</p></div>
     </li>`;
   }).join('');
   wireArtFallback($('#dex-list'));
@@ -139,10 +155,23 @@ function beginRun() {
   busy = false;
   lastRun = null;
   hideResult();
+  setAuto(false);
   show('game');
   nextCard();
   renderHud();
   persist();
+  introduceAuto();
+}
+
+// 처음 열렸을 때 한 번만 알려준다.
+function introduceAuto() {
+  if (!autoUnlocked()) return;
+  const data = load();
+  if (data.autoIntroSeen) return;
+  markAutoIntroSeen();
+  showToast(`<b>▶ 자동으로 넘기기</b>
+    <p>이제 2초에 한 장씩 저절로 넘어가게 할 수 있다. 아래 버튼으로 켜고 끈다.<br>
+    자동일 때 좌우 선택은 <b>무작위</b>로 정해지니, 성향을 노릴 때는 직접 넘기는 게 낫다.</p>`);
 }
 
 function persist() {
@@ -168,10 +197,18 @@ function nextCard() {
 
 function renderCard(card) {
   const stage = stageOf(state);
+  const leanTag = (c) => {
+    const m = STAT_META[c.lean?.stat];
+    return m ? `<small class="lean">${m.icon} ${m.name}</small>` : '';
+  };
   const choices = card.choices
     ? `<div class="choices">
-         <button class="choice" data-choice="0"><span>←</span>${card.choices[0].label}</button>
-         <button class="choice" data-choice="1">${card.choices[1].label}<span>→</span></button>
+         <button class="choice" data-choice="0">
+           <span class="arrow">←</span><b>${card.choices[0].label}</b>${leanTag(card.choices[0])}
+         </button>
+         <button class="choice" data-choice="1">
+           <span class="arrow">→</span><b>${card.choices[1].label}</b>${leanTag(card.choices[1])}
+         </button>
        </div>`
     : '';
   els.card.className = `card card--${card.tone || 'calm'}${card.special ? ' card--special' : ''}`;
@@ -204,7 +241,10 @@ function commit(choiceIdx = null) {
   const stageBefore = stageOf(state).key;
   let tier = null, eff = null, text = '', label = '';
 
-  const tag = tagOf(card.id);
+  // 선택 카드는 고른 쪽의 성향이 쌓인다. 결과의 성패는 여전히 운이지만,
+  // 어느 방향으로 자랄지는 플레이어가 정한다.
+  const lean = card.choices && choiceIdx !== null ? card.choices[choiceIdx].lean : null;
+  const tag = lean?.tag || tagOf(card.id);
   if (tag) state.tagCounts[tag] = (state.tagCounts[tag] || 0) + 1;
 
   if (card.special === 'extend') {
@@ -226,6 +266,12 @@ function commit(choiceIdx = null) {
     if (tier === 'great' || tier === 'terrible') {
       state.highlights.push({ emoji: card.emoji, title: card.title, tier, text });
     }
+  }
+
+  // 고른 방향의 성향은 성패와 무관하게 조금씩 쌓인다.
+  if (lean) {
+    const gain = STAT_META[lean.stat].gain;
+    eff = { ...eff, [lean.stat]: (eff[lean.stat] || 0) + gain };
   }
 
   const delta = applyEffect(state, eff);
@@ -311,6 +357,7 @@ function announceStage(key) {
 /* ---------- 엔딩 ---------- */
 
 function finish() {
+  setAuto(false);
   clearRun();
   const score = computeScore(state);
   const ending = judgeEnding(state, score);
@@ -375,6 +422,50 @@ function doSubmit() {
   $('#submit').innerHTML = `
     <p class="submit-done">${rank}위로 등록됐다!</p>
     ${rankTable(data.ranks, '명예의 전당')}`;
+}
+
+/* ---------- 자동 넘기기 ---------- */
+// 한 번이라도 끝까지 가본 사람에게만 열린다. 두 번째 판부터 쓸 수 있는 편의 기능.
+function autoUnlocked() {
+  return load().endings.length > 0;
+}
+
+function autoRunning() {
+  return autoTimer !== null;
+}
+
+function setAuto(on) {
+  clearInterval(autoTimer);
+  autoTimer = null;
+  if (on) autoTimer = setInterval(autoStep, AUTO_INTERVAL);
+  renderAutoButton();
+}
+
+function autoStep() {
+  if (!screens.game || screens.game.hidden) return setAuto(false);
+  if (busy) return;
+  if (resultOpen) hideResult();
+  // 좌우 선택 카드는 자동일 때 무작위로 고른다. 성향을 노리려면 직접 넘겨야 한다.
+  commit(current?.choices ? (Math.random() < 0.5 ? 0 : 1) : null);
+}
+
+function renderAutoButton() {
+  const btn = $('#auto');
+  if (!autoUnlocked()) { btn.hidden = true; return; }
+  btn.hidden = false;
+  btn.classList.toggle('on', autoRunning());
+  btn.textContent = autoRunning() ? '⏸ 자동 넘기는 중' : '▶ 자동으로 넘기기';
+}
+
+function showToast(html, ms = 5200) {
+  const el = $('#toast');
+  el.innerHTML = html;
+  el.hidden = false;
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => { el.hidden = true; }, 300);
+  }, ms);
 }
 
 /* ---------- 입력 ---------- */
@@ -462,6 +553,24 @@ document.addEventListener('keydown', (e) => {
 
 $('#start').addEventListener('click', launch);
 $('#dex').addEventListener('click', renderDex);
+$('#auto').addEventListener('click', (e) => { e.stopPropagation(); setAuto(!autoRunning()); });
+
+// 하단 성향 수치가 무슨 의미인지 알려준다.
+$('#help').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const sheet = $('#helpsheet');
+  if (!sheet.hidden) { sheet.hidden = true; return; }
+  sheet.innerHTML = `
+    <h3>성향</h3>
+    <p class="help-lead">겪는 일은 운이 정하지만, <b>어느 성향으로 자랄지는 선택으로 정할 수 있다.</b>
+      좌우 선택 카드가 나올 때마다 고른 쪽의 성향이 쌓이고, 마지막에 가장 높은 성향이 엔딩을 가른다.</p>
+    <ul>${Object.values(STAT_META)
+      .map((m) => `<li><b>${m.icon} ${m.name}</b><span>${m.desc}</span></li>`).join('')}</ul>
+    <p class="help-lead">엔딩별 조건은 <b>📖 엔딩 도감</b>에서 볼 수 있다.</p>
+    <button class="btn btn--sm" id="help-close">닫기</button>`;
+  sheet.hidden = false;
+  $('#help-close').addEventListener('click', () => { sheet.hidden = true; });
+});
 bindTitleSwipe();
 $('#dex-back').addEventListener('click', renderTitle);
 $('#retry').addEventListener('click', startGame);

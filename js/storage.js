@@ -4,7 +4,7 @@
 const KEY = 'swiper.records.v2';
 const RANK_SIZE = 10;
 
-const empty = { best: 0, ranks: [], endings: [], lastName: '' };
+const empty = { best: 0, ranks: [], endings: [], lastName: '', autoIntroSeen: false };
 
 export function load() {
   try {
@@ -86,6 +86,12 @@ export function clearRun() {
   } catch {
     /* 지우지 못해도 다음 시작에서 덮어쓴다. */
   }
+}
+
+export function markAutoIntroSeen() {
+  const data = load();
+  data.autoIntroSeen = true;
+  save(data);
 }
 
 export function wouldRank(score) {

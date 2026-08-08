@@ -12,8 +12,8 @@ export const STAGES = [
 // 실제 체감 난이도는 여기서 조절한다. 400회 시뮬레이션 기준 생존율 70%.
 const HP_START = 60;
 const HP_MAX = 120;
-const DAMAGE_MUL = 0.63;
-const HEAL_MUL = 1.37;
+const DAMAGE_MUL = 0.72;
+const HEAL_MUL = 1.3;
 const HUNGER_EVERY = 2; // 이 장수마다 체력 1 감소
 
 export function createState() {
