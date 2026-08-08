@@ -61,8 +61,13 @@ export function probeAssets() {
 
 export function catSVG({ stage, mood = 'idle' }) {
   if (useImages) {
-    return `<img class="cat cat-img cat--${mood}" style="--cat-scale:${stage.scale}"
+    const img = `<img class="cat cat-img cat--${mood}" style="--cat-scale:${stage.scale}"
       src="assets/cat-${mood}.png" alt="" draggable="false">`;
+    // 전설묘가 되면 머리 위에 왕관을 얹는다.
+    if (stage.key === 'legend') {
+      return `<span class="cat-crowned">${img}<img class="crown-img" src="assets/crown.png" alt=""></span>`;
+    }
+    return img;
   }
   return catInk({ stage, mood });
 }

@@ -40,6 +40,12 @@ html, body {
   transform: scale(var(--cat-scale, 1)); transform-origin: bottom center;
   image-rendering: auto; user-select: none; -webkit-user-drag: none;
 }
+.cat-crowned { position: relative; display: inline-block; }
+.crown-img {
+  position: absolute; left: 50%; top: -6%;
+  width: 30%; transform: translateX(-52%) rotate(-6deg);
+  pointer-events: none;
+}
 .cat-img.cat--proud { animation: pop .5s ease; }
 .cat-img.cat--scared, .cat-img.cat--hurt { animation: shake .3s ease 3; }
 
