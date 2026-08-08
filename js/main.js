@@ -4,6 +4,7 @@ import { roll, rollExtreme, TIER_LABEL } from './resolve.js';
 import { catSVG, probeAssets } from './cat.js';
 import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
 import { tagOf, cardById } from './cards.js';
+import { playGreat, playTerrible, isMuted, toggleMute } from './sfx.js';
 import { load, recordEnding, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen } from './storage.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -130,7 +131,7 @@ function escapeHtml(s) {
 // ?cards=20 으로 짧게 돌려볼 수 있다. 테스트와 시연용.
 function requestedLength() {
   const n = Number(new URLSearchParams(location.search).get('cards'));
-  return Number.isFinite(n) && n >= 3 ? Math.min(n, 300) : 100;
+  return Number.isFinite(n) && n >= 3 ? Math.min(n, 300) : 50;
 }
 
 function startGame() {
@@ -215,8 +216,17 @@ function renderCard(card) {
     <div class="card-emoji">${card.emoji}</div>
     <h2 class="card-title">${card.title}</h2>
     <p class="card-text">${card.text}</p>
-    <div class="card-cat">${catSVG({ stage, mood: 'idle' })}</div>
+    <div class="card-cat">
+      <img class="card-art" src="assets/cards/${card.id}.png" alt="">
+    </div>
     ${choices}`;
+
+  // 그 카드 전용 그림이 없으면 평소 표정의 고양이로 대신한다.
+  const art = els.card.querySelector('.card-art');
+  art.addEventListener('error', () => {
+    art.outerHTML = catSVG({ stage, mood: 'idle' });
+  }, { once: true });
+
   els.hint.textContent = card.choices ? '⚡ 좌우로 스와이프해 선택 — 중간은 없다' : '위로 스와이프';
   els.card.querySelectorAll('.choice').forEach((b) =>
     b.addEventListener('click', () => commit(Number(b.dataset.choice))));
@@ -301,9 +311,39 @@ function commit(choiceIdx = null) {
 
 function flyOutCard(tier) {
   els.card.classList.add('card--out');
-  if (tier === 'great') flash('flash--great');
-  if (tier === 'terrible') { flash('flash--terrible'); buzz(60); }
+  if (tier === 'great') { flash('flash--great'); bigFx('great'); buzz([20, 40, 20]); playGreat(); }
+  if (tier === 'terrible') { flash('flash--terrible'); bigFx('terrible'); buzz(90); playTerrible(); }
   setTimeout(() => els.card.classList.remove('card--out'), 360);
+}
+
+// 대성공·대실패는 화면 한가운데에 크게 찍어준다.
+const FX = {
+  great: { label: '대성공!', mood: 'proud', mark: '✨' },
+  terrible: { label: '대실패…', mood: 'hurt', mark: '💥' },
+};
+
+function bigFx(tier) {
+  const fx = FX[tier];
+  const el = $('#fx');
+  el.className = `fx fx--${tier}`;
+  el.innerHTML = `
+    <div class="fx-inner">
+      <img class="fx-art" src="assets/fx/${tier}.png" alt="" data-mood="${fx.mood}">
+      <div class="fx-label">${fx.mark} ${fx.label}</div>
+    </div>`;
+  // 전용 이펙트 그림이 없으면 그 표정의 고양이로 대신한다.
+  const art = el.querySelector('.fx-art');
+  art.addEventListener('error', () => {
+    art.outerHTML = `<div class="fx-cat">${catSVG({ stage: stageOf(state), mood: fx.mood })}</div>`;
+  }, { once: true });
+
+  el.hidden = false;
+  requestAnimationFrame(() => el.classList.add('show'));
+  clearTimeout(bigFx.timer);
+  bigFx.timer = setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => { el.hidden = true; }, 250);
+  }, 900);
 }
 
 function flash(cls) {
@@ -553,6 +593,21 @@ document.addEventListener('keydown', (e) => {
 $('#start').addEventListener('click', launch);
 $('#dex').addEventListener('click', renderDex);
 $('#auto').addEventListener('click', (e) => { e.stopPropagation(); setAuto(!autoRunning()); });
+
+function renderMute() {
+  $('#mute').textContent = isMuted() ? '🔇' : '🔊';
+}
+renderMute();
+$('#mute').addEventListener('click', (e) => { e.stopPropagation(); toggleMute(); renderMute(); });
+
+// 진행 중에 처음 화면으로. 저장되어 있으므로 「이어서 하기」로 돌아올 수 있다.
+$('#pause').addEventListener('click', (e) => {
+  e.stopPropagation();
+  setAuto(false);
+  hideResult();
+  persist();
+  renderTitle();
+});
 
 // 하단 성향 수치가 무슨 의미인지 알려준다.
 $('#help').addEventListener('click', (e) => {

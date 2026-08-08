@@ -14,7 +14,7 @@ const HP_START = 60;
 const HP_MAX = 120;
 const DAMAGE_MUL = 0.72;
 const HEAL_MUL = 1.3;
-const HUNGER_EVERY = 2; // 이 장수마다 체력 1 감소
+const HUNGER_EVERY = 1; // 이 장수마다 체력 1 감소 (판이 50장으로 짧아져 매 장으로 올렸다)
 const FRIEND_TO_HAP = 7; // 카드에 적힌 '동료 1'이 행복 몇 만큼인지
 
 export function createState() {
@@ -35,10 +35,12 @@ export function createState() {
   };
 }
 
+// 성장 단계는 판 길이에 대한 비율로 본다. 50장짜리든 100장짜리든 네 단계를 모두 거친다.
 export function stageOf(state) {
-  if (state.index >= 75 || state.exp >= 250) return STAGES[3];
-  if (state.index >= 50 || state.exp >= 120) return STAGES[2];
-  if (state.index >= 25 || state.exp >= 40) return STAGES[1];
+  const p = state.index / Math.max(1, state.total);
+  if (p >= 0.75 || state.exp >= 250) return STAGES[3];
+  if (p >= 0.5 || state.exp >= 130) return STAGES[2];
+  if (p >= 0.25 || state.exp >= 50) return STAGES[1];
   return STAGES[0];
 }
 

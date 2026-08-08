@@ -41,7 +41,11 @@
 <section id="game" class="screen" hidden>
   <header class="hud">
     <div id="progress" class="progress">1 / 100</div>
-    <div class="score-wrap"><span id="score" class="score">0</span><small>점</small></div>
+    <div class="hud-right">
+      <div class="score-wrap"><span id="score" class="score">0</span><small>점</small></div>
+      <button id="mute" class="pause-btn" title="소리"></button>
+      <button id="pause" class="pause-btn" title="처음 화면으로">⏸</button>
+    </div>
   </header>
   <main class="stack">
     <div id="card" class="card"></div>
@@ -61,6 +65,7 @@
 
   <div id="result" class="result"></div>
   <div id="stage-banner" class="stage-banner"></div>
+  <div id="fx" class="fx" hidden></div>
   <div id="flash"></div>
 </section>
 

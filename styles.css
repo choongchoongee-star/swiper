@@ -249,19 +249,31 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
   background: var(--ink); color: var(--paper);
   padding: 5px 13px; border-radius: 999px; font-size: 14px; letter-spacing: .5px;
 }
+.hud-right { display: flex; align-items: center; gap: 10px; }
 .score-wrap { font-size: 20px; }
 .score-wrap small { font-size: 12px; opacity: .6; margin-left: 2px; }
+
+/* 진행 중에 처음 화면으로 나가는 버튼. 진행 상황은 저장되어 이어서 할 수 있다. */
+.pause-btn {
+  width: 34px; height: 34px; padding: 0; flex: 0 0 auto;
+  font: inherit; font-size: 14px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--paper); color: var(--ink);
+  border: 3px solid var(--ink); border-radius: 50%;
+  box-shadow: 0 3px 0 var(--ink);
+}
+.pause-btn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
 
 .stats {
   display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
   margin: 8px 0 2px; width: 100%; max-width: 460px;
 }
 .stat {
-  display: inline-flex; align-items: center; gap: 3px;
-  background: var(--paper); border: 2.5px solid var(--ink);
-  border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 800;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--paper); border: 3px solid var(--ink);
+  border-radius: 999px; padding: 7px 15px; font-size: 21px; font-weight: 800;
 }
-.stat i { font-style: normal; font-size: 12px; }
+.stat i { font-style: normal; font-size: 19px; }
 
 /* ---------- 카드 ---------- */
 .stack { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; }
@@ -289,6 +301,7 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
 .card-title { margin: 0; font-size: 21px; }
 .card-text { margin: 2px 0 4px; font-size: 15px; line-height: 1.65; opacity: .8; max-width: 24em; }
 .card-cat { margin-top: 2px; }
+.card-art { display: block; width: min(52vw, 210px); height: auto; }
 
 .choices { display: flex; gap: 10px; width: 100%; margin-top: 6px; }
 .choice {
@@ -414,6 +427,40 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
 .stage-banner.show { opacity: 1; }
 .stage-inner { display: flex; flex-direction: column; align-items: center; gap: 10px; animation: pop .6s ease; }
 .stage-inner b { font-size: 20px; }
+
+/* ---------- 대성공 · 대실패 연출 ---------- */
+.fx {
+  position: fixed; inset: 0; z-index: 8;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; opacity: 0; transition: opacity .18s;
+}
+.fx.show { opacity: 1; }
+.fx-inner {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: stamp .45s cubic-bezier(.2,1.4,.4,1);
+}
+.fx-art, .fx-cat .cat, .fx-cat .cat-img { width: min(46vw, 190px); height: auto; }
+.fx-label {
+  font-size: clamp(28px, 9vw, 44px); font-weight: 900; letter-spacing: -1px;
+  padding: 6px 22px; border-radius: 999px;
+  border: 5px solid var(--ink); background: var(--paper);
+  box-shadow: 0 7px 0 var(--ink);
+}
+.fx--great .fx-label { background: var(--gold); }
+.fx--terrible .fx-label { background: var(--bad); color: #fff; }
+.fx--terrible .fx-inner { animation: stamp-bad .45s ease; }
+@keyframes stamp {
+  0% { transform: scale(.2) rotate(-14deg); opacity: 0; }
+  60% { transform: scale(1.12) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes stamp-bad {
+  0% { transform: scale(1.5); opacity: 0; }
+  40% { transform: scale(.94); opacity: 1; }
+  55% { transform: translateX(-9px); }
+  70% { transform: translateX(9px); }
+  100% { transform: translateX(0) scale(1); }
+}
 
 #flash {
   position: fixed; inset: 0; z-index: 7; pointer-events: none;

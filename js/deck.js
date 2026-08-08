@@ -61,21 +61,24 @@ export function buildDeck(length = 130) {
   // 특수 카드 삽입
   const inserts = [];
 
-  // 선택 분기 카드는 열 장에 한 번쯤. 조작에 익숙해지도록 첫 8장에는 넣지 않는다.
-  const count = Math.max(3, Math.round((length - 8) / 10));
-  const span = Math.max(1, Math.floor((length - 10) / count));
+  // 선택 분기 카드는 여덟 장에 한 번쯤. 조작에 익숙해지도록 첫 6장에는 넣지 않는다.
+  const count = Math.max(3, Math.round((length - 6) / 8));
+  const span = Math.max(1, Math.floor((length - 8) / count));
   let bag = [];
   for (let i = 0; i < count; i++) {
     if (!bag.length) bag = shuffled(CHOICE_CARDS);
-    inserts.push({ at: 8 + i * span + Math.floor(Math.random() * span), card: bag.shift() });
+    inserts.push({ at: 6 + i * span + Math.floor(Math.random() * span), card: bag.shift() });
   }
 
-  for (const at of [20, 45, 70, 90]) {
-    if (Math.random() < 0.4) inserts.push({ at, card: EXTEND_CARD });
+  // 위치는 판 길이에 비례해서 잡는다(50장짜리든 100장짜리든 같은 흐름이 되도록).
+  const at = (f) => Math.round(length * f);
+  const jitter = (f) => Math.floor(Math.random() * Math.max(1, Math.round(length * f)));
+  for (const f of [0.2, 0.45, 0.7, 0.9]) {
+    if (Math.random() < 0.4) inserts.push({ at: at(f), card: EXTEND_CARD });
   }
-  inserts.push({ at: 15 + Math.floor(Math.random() * 15), card: CLOVER_CARD });
-  inserts.push({ at: 55 + Math.floor(Math.random() * 20), card: CLOVER_CARD });
-  inserts.push({ at: 60 + Math.floor(Math.random() * 25), card: TRIAL_CARD });
+  inserts.push({ at: at(0.15) + jitter(0.15), card: CLOVER_CARD });
+  inserts.push({ at: at(0.55) + jitter(0.2), card: CLOVER_CARD });
+  inserts.push({ at: at(0.6) + jitter(0.25), card: TRIAL_CARD });
 
   inserts.sort((a, b) => b.at - a.at);
   for (const { at, card } of inserts) {

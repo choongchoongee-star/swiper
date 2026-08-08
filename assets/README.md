@@ -6,9 +6,13 @@
 | 순위 | 용도 | 장수 | 넣는 곳 | 진행 | 없을 때 |
 |---|---|---|---|---|---|
 | 1 | 표정 6종 | 6 | `assets/` | **5/6** (`idle`은 `happy` 임시 복사) | 코드로 그린 SVG 고양이 |
-| 2 | 엔딩 31종 | 31 | `assets/endings/` | **12/31** | 고양이 그림 + 이모지 |
-| 3 | 왕관 오버레이 | 1 | `assets/` | 0/1 | SVG 왕관 |
-| 4 | 조기 사망 엔딩 4종 | 4 | `assets/endings/` | **2/4** (`death_hunger`·`death_cold`) | 이모지 |
+| 2 | 대성공·대실패 이펙트 | 2 | `assets/fx/` | 0/2 | 그 표정의 고양이 그림 |
+| 3 | 엔딩 31종 | 31 | `assets/endings/` | **12/31** | 고양이 그림 + 이모지 |
+| 4 | 카드별 그림 101종 | 101 | `assets/cards/` | 0/101 | 기본 표정(`cat-idle`) |
+| 5 | 왕관 오버레이 | 1 | `assets/` | 0/1 | SVG 왕관 |
+| 6 | 조기 사망 엔딩 4종 | 4 | `assets/endings/` | **2/4** (`death_hunger`·`death_cold`) | 이모지 |
+
+한 판은 **50장**이고, 카드 101종 중 절반쯤만 등장합니다. 카드 그림은 **자주 나오는 것부터** 채우면 됩니다.
 
 **아직 필요한 것**
 - `cat-idle.png` — 지금은 `happy`를 복사해 쓰고 있어 평상시에도 계속 웃습니다. **가장 우선**입니다.
@@ -50,12 +54,12 @@
 
 | 파일 | 표정 | 언제 나오나 | 한 판 등장 |
 |---|---|---|---|
-| `cat-idle.png` | 평범한 표정 | 카드가 처음 뜰 때 | ~100회 |
-| `cat-happy.png` | 기분 좋음 | 성공 | ~35회 |
-| `cat-sad.png` | 시무룩 | 실패, 이별, 조기 사망 | ~25회 |
-| `cat-hurt.png` | 다침 | 대실패 | ~15회 |
-| `cat-proud.png` | 우쭐함 | 대성공, 성장 단계 진입, 엔딩 | ~15회 |
-| `cat-scared.png` | 놀람 | 개·자동차·천둥 같은 위험 | ~8회 |
+| `cat-idle.png` | 평범한 표정 | 카드가 처음 뜰 때(카드 전용 그림이 없을 때) | ~50회 |
+| `cat-happy.png` | 기분 좋음 | 성공 | ~18회 |
+| `cat-sad.png` | 시무룩 | 실패, 이별, 조기 사망 | ~13회 |
+| `cat-proud.png` | 우쭐함 | 대성공, 성장 단계 진입, 엔딩 | ~10회 |
+| `cat-hurt.png` | 다침 | 대실패 | ~7회 |
+| `cat-scared.png` | 놀람 | 개·자동차·천둥 같은 위험 | ~4회 |
 
 **먼저 기준이 되는 한 장(`cat-idle`)을 만듭니다.** 위 아트 스타일 문단 뒤에 이어서:
 
@@ -165,3 +169,143 @@
 4. 왕관 오버레이, 사망 엔딩 4종
 
 중간에 멈춰도 플레이어가 가장 자주 보는 화면부터 채워집니다.
+
+---
+
+# 4. 카드별 고양이 그림 (`assets/cards/`)
+
+카드가 뜰 때 가운데에 나오는 그림입니다. 파일명은 **`<카드 id>.png`**.
+**없으면 기본 표정(`cat-idle.png`)이 대신 나오므로 한 장씩 채워도 됩니다.**
+101종 전부는 양이 많으니, **자주 나오는 카드부터** 채우는 걸 권합니다.
+
+프롬프트는 위의 **[아트 스타일]** 문단 + 아래 카드 이름을 장면으로 쓰면 됩니다.
+예) `dog.png` → 「굵고 균일한 검정 펜선…(스타일 문단)… 큰 개에게 쫓겨 놀란 표정으로 도망치는 주황 줄무늬 고양이」
+
+﻿### 좋은 일 카드 (42종)
+
+| 파일명 | 카드 | 상태 |
+|---|---|---|
+| `fish.png` | 🐟 생선 발견 |  |
+| `friend.png` | 😺 친구 고양이 만남 |  |
+| `toy.png` | 🪶 희귀 장난감 발견 |  |
+| `sun.png` | 🌞 따뜻한 햇볕 |  |
+| `snack.png` | 🍗 맛있는 간식 |  |
+| `butterfly.png` | 🦋 나비 사냥 |  |
+| `treasure.png` | 💰 보물 발견 |  |
+| `feeder.png` | 🥫 급식소 발견 |  |
+| `churu.png` | 🍡 츄르 아저씨 |  |
+| `roof.png` | 🏚 지붕 등반 |  |
+| `mouse.png` | 🐭 쥐 사냥 |  |
+| `kitten.png` | 🐾 아기 고양이 |  |
+| `blossom.png` | 🌸 벚꽃 |  |
+| `lap.png` | 🧓 무릎 |  |
+| `shelter.png` | 🏕 겨울집 발견 |  |
+| `bonnet.png` | 🚙 자동차 보닛 |  |
+| `name.png` | 📛 이름을 얻다 |  |
+| `bin.png` | 🗑 쓰레기통 탐색 |  |
+| `sparrow.png` | 🐦 참새 사냥 |  |
+| `firstsnow.png` | ❄️ 첫눈 |  |
+| `window.png` | 🪟 어항 구경 |  |
+| `fishmonger.png` | 🐠 생선가게 아저씨 |  |
+| `petting.png` | 🤲 조심스러운 손 |  |
+| `warehouse.png` | 🏚 빈 창고 |  |
+| `vent.png` | ♨️ 환기구 |  |
+| `catnip.png` | 🌿 캣닢 |  |
+| `frog.png` | 🐸 개구리 |  |
+| `cicada.png` | 🦗 매미 |  |
+| `library.png` | 📚 조용한 창가 |  |
+| `truck.png` | 🚚 트럭 짐칸 |  |
+| `garden.png` | 🪴 옥상 텃밭 |  |
+| `festival.png` | 🎪 축제 노점 |  |
+| `can.png` | 🥫 통조림 |  |
+| `mother.png` | 🐈 어미의 냄새 |  |
+| `boss.png` | 🐯 대장 고양이 |  |
+| `homeless.png` | 🧣 골목 끝의 사람 |  |
+| `mailbox.png` | 📮 우체통 위 |  |
+| `boat.png` | ⛵ 낚싯배 |  |
+| `sharebowl.png` | 🍚 하나뿐인 밥그릇 |  |
+| `alley.png` | 🌫 낯선 골목 |  |
+| `nest.png` | 🪹 새 둥지 |  |
+| `rooftop.png` | 🌇 노을 |  |
+
+### 나쁜 일 카드 (36종)
+
+| 파일명 | 카드 | 상태 |
+|---|---|---|
+| `rain.png` | 🌧 비 맞음 |  |
+| `dog.png` | 🐕 개에게 쫓김 |  |
+| `car.png` | 🚗 자동차 |  |
+| `winter.png` | 🥶 겨울 추위 |  |
+| `hunger.png` | 🍽 먹이를 못 찾음 |  |
+| `fight.png` | 🤕 싸움 |  |
+| `sick.png` | 🦠 병 |  |
+| `broom.png` | 🧹 사람에게 쫓겨남 |  |
+| `bird.png` | 🦅 큰 새의 위협 |  |
+| `farewell.png` | 😿 이별 |  |
+| `construction.png` | 🚧 공사 |  |
+| `kids.png` | 🧒 아이들 |  |
+| `flea.png` | 🐜 벼룩 |  |
+| `trap.png` | 🪤 낯선 통덫 |  |
+| `typhoon.png` | 🌀 태풍 |  |
+| `ice.png` | 🧊 얼음판 |  |
+| `rival.png` | 😾 영역 침범 |  |
+| `lost.png` | 🧭 길을 잃다 |  |
+| `motorbike.png` | 🛵 오토바이 |  |
+| `puddle.png` | 💧 웅덩이 |  |
+| `firework.png` | 🎆 폭죽 |  |
+| `fogger.png` | 💨 소독차 |  |
+| `drunk.png` | 🍺 취객 |  |
+| `poison.png` | ☠️ 수상한 먹이 |  |
+| `monsoon.png` | 🌊 장마 |  |
+| `heatwave.png` | 🥵 폭염 |  |
+| `bike.png` | 🚲 자전거 |  |
+| `glass.png` | 🪟 유리창 |  |
+| `weasel.png` | 🦡 족제비 |  |
+| `snare.png` | 🕸 얽힌 줄 |  |
+| `bath.png` | 🛁 목욕 |  |
+| `moved.png` | 📦 떠난 사람 |  |
+| `removed.png` | 🚮 철거된 자리 |  |
+| `badfood.png` | 🤢 상한 사료 |  |
+| `losskit.png` | 💔 작은 이별 |  |
+| `thunder.png` | ⛈ 천둥 |  |
+
+### 일상 카드 (23종)
+
+| 파일명 | 카드 | 상태 |
+|---|---|---|
+| `night.png` | 🌙 밤 산책 |  |
+| `box.png` | 📦 상자 |  |
+| `yarn.png` | 🧵 실뭉치 |  |
+| `paw.png` | 🐾 발자국 |  |
+| `peek.png` | 🚪 창밖 구경 |  |
+| `groom.png` | 👅 그루밍 |  |
+| `yawn.png` | 🥱 하품 |  |
+| `tailchase.png` | 🌀 꼬리 잡기 |  |
+| `laundry.png` | 👕 빨래 냄새 |  |
+| `pigeon.png` | 🕊 비둘기 구경 |  |
+| `stretch.png` | 🙆 기지개 |  |
+| `moon.png` | 🌕 보름달 |  |
+| `nap.png` | 😴 낮잠 |  |
+| `raindrop.png` | ☔ 처마 밑 |  |
+| `ant.png` | 🐜 개미 행렬 |  |
+| `leaves.png` | 🍂 낙엽 |  |
+| `bag.png` | 🛍 종이봉투 |  |
+| `scratch.png` | 🪵 기둥 긁기 |  |
+| `water.png` | 💦 물 마시기 |  |
+| `mirror.png` | 🪞 거울 속 고양이 |  |
+| `stars.png` | ✨ 별 |  |
+| `steps.png` | 👣 익숙한 발소리 |  |
+| `sneeze.png` | 🤧 재채기 |  |
+
+---
+
+# 5. 대성공 · 대실패 이펙트 (`assets/fx/`)
+
+결과가 대성공·대실패일 때 **화면 한가운데에 크게** 뜹니다. 없으면 그 표정의 고양이 그림이 대신 나옵니다.
+
+| 파일명 | 장면 프롬프트 |
+|---|---|
+| `great.png` | 앞발을 번쩍 들고 환호하는 고양이, 주변에 반짝이와 색종이가 터짐 |
+| `terrible.png` | 눈이 X자가 되어 뒤로 넘어지는 고양이, 주변에 별과 충격 효과선 |
+
+효과음은 코드로 합성해서 넣었으므로 **음원 파일은 필요 없습니다.**
