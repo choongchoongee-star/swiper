@@ -3,12 +3,24 @@
 이 폴더에 그림을 넣으면 게임이 자동으로 반영합니다.
 **한 장씩 넣는 대로 적용되고, 없는 그림은 기존 SVG나 이모지로 대체됩니다.** 전부 채우지 않아도 게임은 정상 동작합니다.
 
-| 순위 | 용도 | 장수 | 넣는 곳 | 없을 때 |
-|---|---|---|---|---|
-| 1 | 표정 6종 | 6 | `assets/` | 코드로 그린 SVG 고양이 |
-| 2 | 엔딩 31종 | 31 | `assets/endings/` | 이모지 + SVG 고양이 |
-| 3 | 왕관 오버레이 | 1 | `assets/` | SVG 왕관 |
-| 4 | 조기 사망 엔딩 4종 | 4 | `assets/endings/` | 이모지 |
+| 순위 | 용도 | 장수 | 넣는 곳 | 진행 | 없을 때 |
+|---|---|---|---|---|---|
+| 1 | 표정 6종 | 6 | `assets/` | **5/6** (`idle`은 `happy` 임시 복사) | 코드로 그린 SVG 고양이 |
+| 2 | 엔딩 31종 | 31 | `assets/endings/` | **12/31** | 고양이 그림 + 이모지 |
+| 3 | 왕관 오버레이 | 1 | `assets/` | 0/1 | SVG 왕관 |
+| 4 | 조기 사망 엔딩 4종 | 4 | `assets/endings/` | **2/4** (`death_hunger`·`death_cold`) | 이모지 |
+
+**아직 필요한 것**
+- `cat-idle.png` — 지금은 `happy`를 복사해 쓰고 있어 평상시에도 계속 웃습니다. **가장 우선**입니다.
+- **완료 12종**: `hunter` `gourmet` `clanlord` `ninelives` `lucky` `smiley` `wellfed` `ordinary`
+  `swift` `sunshine` `neighbor` `chronicle`
+- **남은 19종**: `humanfriend` `explorer` `stormrider` `treasurer` `nightking` `mascot` `mourner`
+  `homebody` `loner` `survivor` `shadow` `clumsy` `humble` `chief` `companion` `pathfinder`
+  `learner` `sturdy` `skinny`
+- 남은 사망 엔딩 2종: `death_sick` `death_injury`
+
+> 시트로 여러 장을 한 번에 받으면 제가 잘라서 넣어드립니다. `assets/raw/` 에 저장해 주세요.
+> 다만 **라벨 글자를 그림에 넣지 말아 주세요** — 잘라낼 때 지워야 해서 손이 갑니다.
 
 ---
 

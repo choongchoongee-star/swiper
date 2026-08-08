@@ -28,7 +28,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -r index.html styles.css manifest.json icon.svg js _site/
-          if [ -d assets ]; then cp -r assets _site/; fi
+          if [ -d assets ]; then cp -r assets _site/; rm -rf _site/assets/raw; fi
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
