@@ -30,8 +30,8 @@ export function createState() {
     cloverLeft: 0,     // 남은 대실패 무효 횟수
     stageKey: 'baby',
     highlights: [],    // 대성공/대실패 기록
-    dead: false,
-    deathCause: null,
+    rescued: false,
+    rescueCause: null,
   };
 }
 
@@ -84,8 +84,8 @@ export function computeScore(state) {
     state.hp * 1 +
     state.greatCount * 100 +
     state.bonusScore +
-    (state.dead ? 0 : 500);
+    (state.rescued ? 0 : 500);
   const stageMul = stageOf(state).key === 'legend' ? 1.2 : 1;
-  const deathMul = state.dead ? 0.7 : 1;
-  return Math.round(raw * stageMul * deathMul);
+  const earlyMul = state.rescued ? 0.7 : 1;
+  return Math.round(raw * stageMul * earlyMul);
 }

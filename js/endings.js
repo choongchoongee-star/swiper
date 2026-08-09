@@ -146,15 +146,20 @@ export const ENDINGS = [
 export const DEX = ENDINGS.filter((e) => !e.hidden);
 export const TYPE_COUNT = DEX.length;
 
-export const DEATH_ENDINGS = {
-  hunger: { id: 'death_hunger', emoji: '😿', name: '짧은 생 — 굶주림', desc: '끝내 빈 그릇 앞에서 눈을 감았다.' },
-  sick: { id: 'death_sick', emoji: '😿', name: '짧은 생 — 병', desc: '몸이 끝까지 버텨주지 않았다.' },
-  injury: { id: 'death_injury', emoji: '😿', name: '짧은 생 — 사고', desc: '세상은 작은 고양이에게 너무 거칠었다.' },
-  cold: { id: 'death_cold', emoji: '😿', name: '짧은 생 — 추위', desc: '그 겨울은 유난히 길었다.' },
+// 체력이 다하면 죽는 대신 구조된다. 길 생활은 여기서 끝나지만 삶은 이어진다.
+export const RESCUE_ENDINGS = {
+  hunger: { id: 'rescue_hunger', emoji: '🍚', name: '구조된 날',
+    desc: '빈 그릇 앞에서 잠든 너를, 누군가 조용히 안아 올렸다. 이제 배곯을 일은 없다.' },
+  sick: { id: 'rescue_sick', emoji: '🏥', name: '병원 가는 길',
+    desc: '몸이 버텨주지 않던 날, 낯선 손이 너를 담요에 감쌌다. 다음 날 아침 눈이 떠졌다.' },
+  injury: { id: 'rescue_injury', emoji: '🤲', name: '못 본 척하지 않은 사람',
+    desc: '쓰러진 너를 지나치지 않은 사람이 있었다. 골목 생활은 그날로 끝났다.' },
+  cold: { id: 'rescue_cold', emoji: '🧣', name: '따뜻한 품',
+    desc: '그 겨울, 얼어붙기 직전의 너를 품에 안은 사람이 있었다. 이제 춥지 않다.' },
 };
 
 export function judgeEnding(state, score) {
-  if (state.dead) return DEATH_ENDINGS[state.deathCause] || DEATH_ENDINGS.hunger;
+  if (state.rescued) return RESCUE_ENDINGS[state.rescueCause] || RESCUE_ENDINGS.hunger;
   const ctx = buildContext(state, score);
   return ENDINGS.find((e) => e.test(state, ctx));
 }

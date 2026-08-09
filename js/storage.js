@@ -73,7 +73,7 @@ export function loadRun() {
     if (!raw) return null;
     const run = JSON.parse(raw);
     if (!run?.state || !Array.isArray(run.deckIds)) return null;
-    if (run.state.dead || run.state.index >= run.state.total) return null;
+    if (run.state.rescued || run.state.index >= run.state.total) return null;
     return run;
   } catch {
     return null;

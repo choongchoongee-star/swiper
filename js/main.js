@@ -20,7 +20,7 @@ const els = {
 // 스탯마다 자라는 규모가 달라서(동료는 한 자릿수, 경험치는 세 자릿수) 각자의 크기에 맞춰 잡았다.
 // 한 판에 여덟 번쯤 나오므로 꾸준히 한쪽만 고르면 그 성향이 확실히 앞선다.
 const STAT_META = {
-  hp: { icon: '❤️', name: '체력', gain: 6, desc: '0이 되면 그 자리에서 삶이 끝난다. 두 장마다 1씩 준다.' },
+  hp: { icon: '❤️', name: '체력', gain: 6, desc: '0이 되면 사람에게 구조되어 길 생활이 끝난다. 카드를 넘길 때마다 1씩 준다.' },
   hap: { icon: '😊', name: '행복', gain: 12, desc: '사람과 햇볕, 다정한 순간으로 쌓인다.' },
   abi: { icon: '🪶', name: '능력', gain: 5, desc: '사냥과 위기 회피의 성공 확률을 올린다.' },
   exp: { icon: '✨', name: '경험치', gain: 20, desc: '성장 단계를 앞당기고 점수에서 가장 큰 몫을 차지한다.' },
@@ -66,7 +66,7 @@ function renderResume() {
 }
 
 function collected(data) {
-  return data.endings.filter((e) => !e.startsWith('death'));
+  return data.endings.filter((e) => !e.startsWith('rescue') && !e.startsWith('death'));
 }
 
 // 엔딩 그림은 있으면 쓰고, 없으면 이모지로 둔다.
@@ -178,7 +178,7 @@ function introduceAuto() {
 }
 
 function persist() {
-  if (state.dead || state.index >= state.total) clearRun();
+  if (state.rescued || state.index >= state.total) clearRun();
   else saveRun(state, deck.map((c) => c.id));
 }
 
@@ -215,7 +215,7 @@ function preloadAhead(from, count = 5) {
 }
 
 function nextCard() {
-  if (state.dead || state.index >= state.total || state.index >= deck.length) return finish();
+  if (state.rescued || state.index >= state.total || state.index >= deck.length) return finish();
   current = deck[state.index];
   renderCard(current);
   preloadAhead(state.index + 1);
@@ -315,8 +315,8 @@ function commit(choiceIdx = null) {
 
   state.index++;
   if (state.hp <= 0) {
-    state.dead = true;
-    state.deathCause = causeOf(card.id);
+    state.rescued = true;
+    state.rescueCause = causeOf(card.id);
   }
 
   renderHud();
@@ -328,7 +328,7 @@ function commit(choiceIdx = null) {
   const grew = stageBefore !== stageAfter;
 
   setTimeout(() => {
-    if (state.dead) return finish();
+    if (state.rescued) return finish();
     if (grew) return announceStage(stageAfter);
     nextCard();
     busy = false;
@@ -446,7 +446,7 @@ function finish() {
   const art = $('#ending-body .ending-art');
   if (art) {
     art.addEventListener('error', () => {
-      art.outerHTML = catSVG({ stage: stageOf(state), mood: state.dead ? 'sad' : 'proud' });
+      art.outerHTML = catSVG({ stage: stageOf(state), mood: state.rescued ? 'happy' : 'proud' });
     }, { once: true });
   }
 
