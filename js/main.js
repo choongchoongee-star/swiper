@@ -1,5 +1,5 @@
 import { buildDeck } from './deck.js';
-import { createState, stageOf, applyEffect, tickHunger, computeScore } from './state.js';
+import { createState, stageOf, lockStage, applyEffect, tickHunger, computeScore } from './state.js';
 import { roll, rollExtreme, TIER_LABEL } from './resolve.js';
 import { catSVG, probeAssets, MOODS } from './cat.js';
 import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
@@ -29,6 +29,8 @@ const STAT_META = {
 const AUTO_INTERVAL = 2000;
 
 let deck, state, current, busy = false, resultOpen = false;
+let resolved = false;  // 지금 화면의 카드가 이미 판정됐나
+let grew = null;       // 이번 카드로 올라간 성장 단계 (넘길 때 배너로 알린다)
 let autoTimer = null;
 let lastRun = null; // 엔딩 화면에서 랭킹 등록에 쓸 결과
 
@@ -153,6 +155,8 @@ function resumeGame() {
 function beginRun() {
   current = null;
   busy = false;
+  resolved = false;
+  grew = null;
   lastRun = null;
   hideResult();
   setAuto(false);
@@ -186,7 +190,7 @@ function persist() {
 
 function renderHud() {
   // 선택 결과 카드는 방금 넘긴 그 카드의 결과이므로 번호를 앞당기지 않는다.
-  const shown = state.pending ? state.index : state.index + 1;
+  const shown = (resolved || state.pending) ? state.index : state.index + 1;
   els.progress.textContent = `${Math.min(shown, state.total)} / ${state.total}`;
   els.score.textContent = computeScore(state).toLocaleString();
   els.stats.innerHTML = [
@@ -223,8 +227,12 @@ function preloadAhead(from, count = 5) {
 function nextCard() {
   if (state.rescued || state.index >= state.total || state.index >= deck.length) return finish();
   current = deck[state.index];
+  resolved = false;
   renderCard(current);
   preloadAhead(state.index + 1);
+  // 선택 카드가 아니면 카드가 뜨는 순간 바로 판정하고 결과를 함께 보여준다.
+  // 스와이프는 「이 장면을 겪는다」가 아니라 「다음 장으로 넘긴다」는 뜻이 된다.
+  if (!current.choices) resolveCard(current);
 }
 
 function renderCard(card) {
@@ -304,16 +312,17 @@ function commit(choiceIdx = null) {
   if (card.choices && choiceIdx === null) return; // 선택 카드는 좌우로만 넘어간다
   busy = true;
 
-  // 선택 결과 카드는 이미 결과가 반영된 상태다. 넘기기만 하면 된다.
-  if (card.isResult) return passResult();
+  if (card.isResult) return passResult();      // 선택 결과 카드 — 넘기기만 한다
+  if (card.choices) return chooseCard(card, choiceIdx);
+  return advance();                            // 이미 판정이 끝난 카드 — 다음 장으로
+}
 
+// 카드가 화면에 뜨는 순간의 판정. 결과 알림과 연출이 카드와 동시에 나온다.
+function resolveCard(card) {
   const stageBefore = stageOf(state).key;
   let tier = null, eff = null, text = '', label = '';
 
-  // 선택 카드는 고른 쪽의 성향이 쌓인다. 결과의 성패는 여전히 운이지만,
-  // 어느 방향으로 자랄지는 플레이어가 정한다.
-  const lean = card.choices && choiceIdx !== null ? card.choices[choiceIdx].lean : null;
-  const tag = lean?.tag || tagOf(card.id);
+  const tag = tagOf(card.id);
   if (tag) state.tagCounts[tag] = (state.tagCounts[tag] || 0) + 1;
 
   if (card.special === 'extend') {
@@ -325,9 +334,8 @@ function commit(choiceIdx = null) {
   } else if (card.calm) {
     label = '평온'; text = card.text; eff = card.calm;
   } else {
-    tier = card.choices ? rollExtreme(state, card) : roll(state, card);
-    const outcomes = card.choices ? card.choices[choiceIdx].outcomes : card.outcomes;
-    eff = outcomes[tier];
+    tier = roll(state, card);
+    eff = card.outcomes[tier];
     label = TIER_LABEL[tier];
     text = pickText(card, tier, eff.t);
     if (tier === 'great') state.greatCount++;
@@ -337,21 +345,51 @@ function commit(choiceIdx = null) {
     }
   }
 
-  // 고른 방향의 성향은 성패와 무관하게 조금씩 쌓인다.
-  if (lean) {
-    const gain = STAT_META[lean.stat].gain;
-    eff = { ...eff, [lean.stat]: (eff[lean.stat] || 0) + gain };
+  const delta = applyEffect(state, eff);
+  chargeDamage(card, delta);
+  tickHunger(state);
+  if (card.special !== 'clover' && state.cloverLeft > 0) state.cloverLeft--;
+
+  state.index++;
+  resolved = true;
+  if (state.hp <= 0) {
+    state.rescued = true;
+    state.rescueCause = worstCause(state);
   }
 
+  lockStage(state);
+  const after = stageOf(state).key;
+  grew = stageBefore === after ? null : after;
+
+  renderHud();
+  persist();
+  fanfare(tier);
+  showResult({ label, tier, text, delta, mood: eff.mood });
+  busy = false;
+}
+
+// 선택 카드는 고른 쪽의 성향이 쌓인다. 성패는 여전히 운이 정한다.
+function chooseCard(card, choiceIdx) {
+  const stageBefore = stageOf(state).key;
+  const choice = card.choices[choiceIdx];
+  const lean = choice.lean;
+  if (lean?.tag) state.tagCounts[lean.tag] = (state.tagCounts[lean.tag] || 0) + 1;
+
+  const tier = rollExtreme(state, card);
+  let eff = choice.outcomes[tier];
+  const label = TIER_LABEL[tier];
+  const text = pickText(card, tier, eff.t);
+  if (tier === 'great') state.greatCount++;
+  if (tier === 'terrible') state.terribleCount++;
+  state.highlights.push({ emoji: card.emoji, title: card.title, tier, text });
+
+  // 고른 방향의 성향은 성패와 무관하게 쌓인다.
+  eff = { ...eff, [lean.stat]: (eff[lean.stat] || 0) + STAT_META[lean.stat].gain };
+
   const delta = applyEffect(state, eff);
-  // 무엇 때문에 체력이 깎였는지 쌓아둔다. 구조될 때 어떤 엔딩이 나올지는 이 누적으로 정한다.
-  if (delta.hp < 0) {
-    const cause = causeOf(card.id);
-    state.causeDamage[cause] = (state.causeDamage[cause] || 0) - delta.hp;
-  }
+  chargeDamage(card, delta);
   tickHunger(state);
-  // 클로버를 주운 장에서 깎으면 약속한 세 장 중 한 장이 그냥 사라진다.
-  if (card.special !== 'clover' && state.cloverLeft > 0) state.cloverLeft--;
+  if (state.cloverLeft > 0) state.cloverLeft--;
 
   state.index++;
   if (state.hp <= 0) {
@@ -359,35 +397,39 @@ function commit(choiceIdx = null) {
     state.rescueCause = worstCause(state);
   }
 
-  renderHud();
-
-  const stageAfter = stageOf(state).key;
-  const grew = stageBefore !== stageAfter;
-
+  lockStage(state);
+  const after = stageOf(state).key;
   // 선택 카드는 「선택지 카드 + 결과 카드」 한 세트다.
   // 고른 순간에는 결과를 감추고, 다음 장에서 무슨 일이 벌어졌는지 보여준다.
-  if (card.choices) {
-    state.pending = {
-      art: `${card.id}_${choiceIdx}`,
-      baseId: card.id,
-      emoji: card.emoji,
-      title: card.choices[choiceIdx].label,
-      text, tier, label, delta, mood: eff.mood,
-      grew: grew ? stageAfter : null,
-    };
-    persist();
-    flyOutCard(null);
-    setTimeout(() => { showPending(); busy = false; }, 380);
-    return;
-  }
-
+  state.pending = {
+    art: `${card.id}_${choiceIdx}`,
+    baseId: card.id,
+    emoji: card.emoji,
+    title: choice.label,
+    text, tier, label, delta, mood: eff.mood,
+    grew: stageBefore === after ? null : after,
+  };
+  renderHud();
   persist();
-  flyOutCard(tier);
-  showResult({ label, tier, text, delta, mood: eff.mood });
+  flyOutCard(null);
+  setTimeout(() => { showPending(); busy = false; }, 380);
+}
 
+// 무엇 때문에 체력이 깎였는지 쌓아둔다. 구조될 때 어떤 엔딩이 나올지는 이 누적으로 정한다.
+function chargeDamage(card, delta) {
+  if (delta.hp >= 0) return;
+  const cause = causeOf(card.id);
+  state.causeDamage[cause] = (state.causeDamage[cause] || 0) - delta.hp;
+}
+
+// 판정이 끝난 카드를 넘긴다.
+function advance() {
+  const grown = grew;
+  grew = null;
+  flyOutCard(null);
   setTimeout(() => {
     if (state.rescued) return finish();
-    if (grew) return announceStage(stageAfter);
+    if (grown) return announceStage(grown);
     nextCard();
     busy = false;
   }, 380);
@@ -400,6 +442,7 @@ function showPending() {
     id: p.art, isResult: true, emoji: p.emoji, title: p.title, text: p.text,
     artFallback: p.baseId, tone: p.tier === 'great' ? 'good' : 'bad',
   };
+  resolved = false;
   renderCard(current);
   renderHud();          // 결과 카드는 방금 넘긴 그 카드의 번호를 그대로 유지한다
   fanfare(p.tier);

@@ -28,7 +28,7 @@ export function createState() {
     index: 0,          // 지금까지 넘긴 카드 수
     total: 100,        // 연장 카드로 늘어난다
     cloverLeft: 0,     // 남은 대실패 무효 횟수
-    stageKey: 'baby',
+    stageIdx: 0,       // 지금까지 올라간 성장 단계 (뒤로 내려가지 않는다)
     highlights: [],    // 대성공/대실패 기록
     rescued: false,
     rescueCause: null,
@@ -38,12 +38,23 @@ export function createState() {
 }
 
 // 성장 단계는 판 길이에 대한 비율로 본다. 50장짜리든 100장짜리든 네 단계를 모두 거친다.
-export function stageOf(state) {
+function reachedStage(state) {
   const p = state.index / Math.max(1, state.total);
-  if (p >= 0.75 || state.exp >= 250) return STAGES[3];
-  if (p >= 0.5 || state.exp >= 130) return STAGES[2];
-  if (p >= 0.25 || state.exp >= 50) return STAGES[1];
-  return STAGES[0];
+  if (p >= 0.75 || state.exp >= 250) return 3;
+  if (p >= 0.5 || state.exp >= 130) return 2;
+  if (p >= 0.25 || state.exp >= 50) return 1;
+  return 0;
+}
+
+// 인생 연장 카드로 남은 장수가 늘면 진행률이 되돌아간다.
+// 그때 단계까지 내려가면 「아기 고양이가 되었다」가 다시 뜨므로, 한 번 오른 단계는 유지한다.
+export function stageOf(state) {
+  return STAGES[Math.max(reachedStage(state), state.stageIdx || 0)];
+}
+
+export function lockStage(state) {
+  state.stageIdx = Math.max(reachedStage(state), state.stageIdx || 0);
+  return state.stageIdx;
 }
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
