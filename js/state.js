@@ -32,6 +32,7 @@ export function createState() {
     highlights: [],    // 대성공/대실패 기록
     rescued: false,
     rescueCause: null,
+    pending: null,     // 아직 보여주지 않은 선택 결과 카드
   };
 }
 

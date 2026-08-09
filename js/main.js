@@ -160,7 +160,9 @@ function beginRun() {
   preload([...MOODS.map((m) => `assets/cat-${m}.png`),
     'assets/fx/great.png', 'assets/fx/terrible.png', 'assets/crown.png']);
   show('game');
-  nextCard();
+  // 선택 결과 카드를 보던 중에 나갔다면 그 카드부터 다시 보여준다.
+  if (state.pending) showPending();
+  else nextCard();
   renderHud();
   persist();
   introduceAuto();
@@ -237,7 +239,7 @@ function renderCard(card) {
          </button>
        </div>`
     : '';
-  els.card.className = `card card--${card.tone || 'calm'}${card.special ? ' card--special' : ''}`;
+  els.card.className = `card card--${card.tone || 'calm'}${card.special ? ' card--special' : ''}${card.isResult ? ' card--result' : ''}`;
   els.card.innerHTML = `
     <div class="card-emoji">${card.emoji}</div>
     <h2 class="card-title">${card.title}</h2>
@@ -248,8 +250,17 @@ function renderCard(card) {
     ${choices}`;
 
   // 그 카드 전용 그림이 없으면 평소 표정의 고양이로 대신한다.
+  // 결과 카드 전용 그림이 아직 없으면 선택지 카드의 그림으로 대신한다.
   const art = els.card.querySelector('.card-art');
   art.addEventListener('error', () => {
+    if (card.artFallback) {
+      art.src = `assets/cards/${card.artFallback}.png`;
+      card.artFallback = null;
+      art.addEventListener('error', () => {
+        art.outerHTML = catSVG({ stage, mood: 'idle' });
+      }, { once: true });
+      return;
+    }
     art.outerHTML = catSVG({ stage, mood: 'idle' });
   }, { once: true });
 
@@ -272,6 +283,9 @@ function commit(choiceIdx = null) {
   const card = current;
   if (card.choices && choiceIdx === null) return; // 선택 카드는 좌우로만 넘어간다
   busy = true;
+
+  // 선택 결과 카드는 이미 결과가 반영된 상태다. 넘기기만 하면 된다.
+  if (card.isResult) return passResult();
 
   const stageBefore = stageOf(state).key;
   let tier = null, eff = null, text = '', label = '';
@@ -320,12 +334,30 @@ function commit(choiceIdx = null) {
   }
 
   renderHud();
-  persist();
-  flyOutCard(tier);
-  showResult({ label, tier, text, delta, mood: eff.mood });
 
   const stageAfter = stageOf(state).key;
   const grew = stageBefore !== stageAfter;
+
+  // 선택 카드는 「선택지 카드 + 결과 카드」 한 세트다.
+  // 고른 순간에는 결과를 감추고, 다음 장에서 무슨 일이 벌어졌는지 보여준다.
+  if (card.choices) {
+    state.pending = {
+      art: `${card.id}_${choiceIdx}`,
+      baseId: card.id,
+      emoji: card.emoji,
+      title: card.choices[choiceIdx].label,
+      text, tier, label, delta, mood: eff.mood,
+      grew: grew ? stageAfter : null,
+    };
+    persist();
+    flyOutCard(null);
+    setTimeout(() => { showPending(); busy = false; }, 380);
+    return;
+  }
+
+  persist();
+  flyOutCard(tier);
+  showResult({ label, tier, text, delta, mood: eff.mood });
 
   setTimeout(() => {
     if (state.rescued) return finish();
@@ -335,11 +367,40 @@ function commit(choiceIdx = null) {
   }, 380);
 }
 
+// 선택 결과 카드를 띄우고, 그 위에서 결과 알림과 대성공·대실패 연출을 낸다.
+function showPending() {
+  const p = state.pending;
+  current = {
+    id: p.art, isResult: true, emoji: p.emoji, title: p.title, text: p.text,
+    artFallback: p.baseId, tone: p.tier === 'great' ? 'good' : 'bad',
+  };
+  renderCard(current);
+  fanfare(p.tier);
+  showResult(p);
+}
+
+function passResult() {
+  const grew = state.pending?.grew;
+  state.pending = null;
+  persist();
+  flyOutCard(null);
+  setTimeout(() => {
+    if (state.rescued) return finish();
+    if (grew) return announceStage(grew);
+    nextCard();
+    busy = false;
+  }, 380);
+}
+
 function flyOutCard(tier) {
   els.card.classList.add('card--out');
+  fanfare(tier);
+  setTimeout(() => els.card.classList.remove('card--out'), 360);
+}
+
+function fanfare(tier) {
   if (tier === 'great') { flash('flash--great'); bigFx('great'); buzz([20, 40, 20]); playGreat(); }
   if (tier === 'terrible') { flash('flash--terrible'); bigFx('terrible'); buzz(90); playTerrible(); }
-  setTimeout(() => els.card.classList.remove('card--out'), 360);
 }
 
 // 대성공·대실패는 화면 한가운데에 크게 찍어준다.
