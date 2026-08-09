@@ -212,6 +212,8 @@ function preloadAhead(from, count = 5) {
   const urls = [];
   for (let i = from; i < Math.min(from + count, deck.length); i++) {
     urls.push(`assets/cards/${deck[i].id}.png`);
+    // 선택 카드는 고르자마자 결과 카드가 이어지므로 양쪽 결과 그림도 미리 받아둔다.
+    if (deck[i].choices) urls.push(`assets/cards/${deck[i].id}_0.png`, `assets/cards/${deck[i].id}_1.png`);
   }
   preload(urls);
 }
