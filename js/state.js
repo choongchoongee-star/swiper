@@ -72,7 +72,7 @@ export function applyEffect(state, eff) {
   };
 }
 
-// 두 장마다 체력이 1씩 자연 감소한다. 굶주림의 압박.
+// 카드를 넘길 때마다 체력이 1씩 자연 감소한다. 굶주림의 압박.
 export function tickHunger(state) {
   if (state.index % HUNGER_EVERY === 0) state.hp = Math.max(0, state.hp - 1);
 }
