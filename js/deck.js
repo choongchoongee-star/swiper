@@ -28,7 +28,7 @@ function cycler(pool) {
   };
 }
 
-// 단계별 긍정 비율 (아기·전설묘 구간은 조금 더 다정하게)
+// 단계별 긍정 비율 (아기·골목의 어른 구간은 조금 더 다정하게)
 function goodRatio(i) {
   if (i < 25) return 0.6;
   if (i < 75) return 0.5;

@@ -63,7 +63,7 @@ export function catSVG({ stage, mood = 'idle' }) {
   if (useImages) {
     const img = `<img class="cat cat-img cat--${mood}" style="--cat-scale:${stage.scale}"
       src="assets/cat-${mood}.png" alt="" draggable="false">`;
-    // 전설묘가 되면 머리 위에 왕관을 얹는다.
+    // 골목의 어른이 되면 머리 위에 왕관을 얹는다.
     if (stage.key === 'legend') {
       return `<span class="cat-crowned">${img}<img class="crown-img" src="assets/crown.png" alt=""></span>`;
     }

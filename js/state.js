@@ -2,9 +2,9 @@
 
 export const STAGES = [
   { key: 'baby', name: '아기 고양이', emoji: '🐱', scale: 0.62, mod: -0.05, tint: '#ffe8d6' },
-  { key: 'teen', name: '청소년 고양이', emoji: '🐈', scale: 0.8, mod: 0, tint: '#ffe0b8' },
-  { key: 'adult', name: '성묘', emoji: '🐈‍⬛', scale: 1, mod: 0.05, tint: '#ffd39b' },
-  { key: 'legend', name: '전설묘', emoji: '👑', scale: 1.15, mod: 0.1, tint: '#f7c07a' },
+  { key: 'teen', name: '어린 고양이', emoji: '🐈', scale: 0.8, mod: 0, tint: '#ffe0b8' },
+  { key: 'adult', name: '다 큰 고양이', emoji: '🐈‍⬛', scale: 1, mod: 0.05, tint: '#ffd39b' },
+  { key: 'legend', name: '골목의 어른', emoji: '👑', scale: 1.15, mod: 0.1, tint: '#f7c07a' },
 ];
 
 // 밸런스 계수.

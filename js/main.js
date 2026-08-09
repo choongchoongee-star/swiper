@@ -383,7 +383,7 @@ function hideResult() {
 
 function announceStage(key) {
   const stage = stageOf(state);
-  els.stage.innerHTML = `<div class="stage-inner">${catSVG({ stage, mood: 'proud' })}<b>${stage.emoji} ${stage.name}이(가) 되었다</b></div>`;
+  els.stage.innerHTML = `<div class="stage-inner">${catSVG({ stage, mood: 'proud' })}<b>${stage.emoji} ${stage.name}${subjectJosa(stage.name)} 되었다</b></div>`;
   els.stage.classList.add('show');
   buzz([30, 60, 30]);
   setTimeout(() => {
@@ -593,6 +593,13 @@ document.addEventListener('keydown', (e) => {
 $('#start').addEventListener('click', launch);
 $('#dex').addEventListener('click', renderDex);
 $('#auto').addEventListener('click', (e) => { e.stopPropagation(); setAuto(!autoRunning()); });
+
+// 받침이 있으면 '이', 없으면 '가'. 「골목의 어른이 되었다」처럼 자연스럽게 읽히도록.
+function subjectJosa(word) {
+  const last = word.trim().slice(-1).charCodeAt(0);
+  if (last < 0xac00 || last > 0xd7a3) return '이';
+  return (last - 0xac00) % 28 ? '이' : '가';
+}
 
 function renderMute() {
   $('#mute').textContent = isMuted() ? '🔇' : '🔊';
