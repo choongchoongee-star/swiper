@@ -1,7 +1,7 @@
 import { buildDeck } from './deck.js';
 import { createState, stageOf, applyEffect, tickHunger, computeScore } from './state.js';
 import { roll, rollExtreme, TIER_LABEL } from './resolve.js';
-import { catSVG, probeAssets } from './cat.js';
+import { catSVG, probeAssets, MOODS } from './cat.js';
 import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
 import { tagOf, cardById } from './cards.js';
 import { playGreat, playTerrible, isMuted, toggleMute } from './sfx.js';
@@ -156,6 +156,9 @@ function beginRun() {
   lastRun = null;
   hideResult();
   setAuto(false);
+  // 표정과 이펙트는 판이 시작될 때 한 번에 받아둔다
+  preload([...MOODS.map((m) => `assets/cat-${m}.png`),
+    'assets/fx/great.png', 'assets/fx/terrible.png', 'assets/crown.png']);
   show('game');
   nextCard();
   renderHud();
@@ -189,10 +192,33 @@ function renderHud() {
   document.body.style.setProperty('--tint', stageOf(state).tint);
 }
 
+// 그림이 카드보다 늦게 뜨면 글씨만 먼저 보여 어색하다.
+// 앞으로 나올 카드의 그림을 미리 받아두고 브라우저 캐시에 올려둔다.
+const preloaded = new Map();
+
+function preload(urls) {
+  for (const url of urls) {
+    if (preloaded.has(url)) continue;
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+    preloaded.set(url, img);
+  }
+}
+
+function preloadAhead(from, count = 5) {
+  const urls = [];
+  for (let i = from; i < Math.min(from + count, deck.length); i++) {
+    urls.push(`assets/cards/${deck[i].id}.png`);
+  }
+  preload(urls);
+}
+
 function nextCard() {
   if (state.dead || state.index >= state.total || state.index >= deck.length) return finish();
   current = deck[state.index];
   renderCard(current);
+  preloadAhead(state.index + 1);
 }
 
 function renderCard(card) {

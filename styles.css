@@ -307,7 +307,12 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
 .card-title { margin: 0; font-size: 21px; }
 .card-text { margin: 2px 0 4px; font-size: 15px; line-height: 1.65; opacity: .8; max-width: 24em; }
 .card-cat { margin-top: 2px; }
-.card-art { display: block; width: min(52vw, 210px); height: auto; }
+/* 자리를 미리 잡아둬 그림이 늦게 떠도 글씨가 밀리지 않는다 */
+.card-art {
+  display: block; width: min(52vw, 210px); aspect-ratio: 1 / 1; height: auto;
+  object-fit: contain;
+}
+.card-cat { min-height: min(52vw, 210px); display: flex; align-items: center; justify-content: center; }
 
 .choices { display: flex; gap: 10px; width: 100%; margin-top: 6px; }
 .choice {
@@ -435,10 +440,12 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
 .stage-inner b { font-size: 20px; }
 
 /* ---------- 대성공 · 대실패 연출 ---------- */
+/* 무엇보다 앞에 오고, 뒤쪽 화면은 살짝 어둡게 눌러 겹쳐 보이지 않게 한다 */
 .fx {
-  position: fixed; inset: 0; z-index: 8;
+  position: fixed; inset: 0; z-index: 30;
   display: flex; align-items: center; justify-content: center;
   pointer-events: none; opacity: 0; transition: opacity .18s;
+  background: rgba(43, 29, 20, .34);
 }
 .fx.show { opacity: 1; }
 .fx-inner {
