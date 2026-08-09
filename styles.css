@@ -270,16 +270,20 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
 }
 .pause-btn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
 
+/* 네 성향은 항상 한 줄에 나란히. 화면이 좁으면 칸을 줄여서라도 줄바꿈하지 않는다 */
 .stats {
-  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
-  margin: 8px 0 2px; width: 100%; max-width: 460px;
+  display: flex; gap: 5px; flex-wrap: nowrap; justify-content: center;
+  margin: 8px 0 2px; width: 100%; max-width: 460px; min-width: 0;
 }
 .stat {
-  display: inline-flex; align-items: center; gap: 6px;
+  flex: 1 1 0; min-width: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
   background: var(--paper); border: 3px solid var(--ink);
-  border-radius: 999px; padding: 7px 15px; font-size: 21px; font-weight: 800;
+  border-radius: 999px; padding: 7px 4px;
+  font-size: clamp(15px, 4.6vw, 21px); font-weight: 800;
+  white-space: nowrap;
 }
-.stat i { font-style: normal; font-size: 19px; }
+.stat i { font-style: normal; font-size: 0.9em; }
 
 /* ---------- 카드 ---------- */
 .stack { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; }
