@@ -3,7 +3,8 @@
 
 import { stageOf } from './state.js';
 
-const BASE = { great: 0.08, good: 0.42, bad: 0.35, terrible: 0.15 };
+// 대실패는 대성공의 절반쯤만 나오게 한다. 나쁜 일이 계속 터지면 넘길 맛이 안 난다.
+const BASE = { great: 0.10, good: 0.40, bad: 0.425, terrible: 0.075 };
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 export function probabilities(state, card) {

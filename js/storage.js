@@ -34,6 +34,16 @@ export function recordEnding(ending) {
   return data;
 }
 
+// 이름을 등록하지 않고 나가도 최고 점수는 남긴다.
+export function recordBest(score) {
+  const data = load();
+  if (score > data.best) {
+    data.best = score;
+    save(data);
+  }
+  return data;
+}
+
 // 랭킹 등록. 등록된 순위(1부터)를 돌려주고, 10위 안에 못 들면 null.
 export function submitScore({ name, score, ending, cards }) {
   const data = load();

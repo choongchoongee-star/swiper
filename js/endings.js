@@ -6,9 +6,9 @@
 // 사건으로 결정되는 특별 엔딩을 먼저 보고, 없으면 스탯과 점수로 정한다.
 
 // 완주 기록의 중앙값. 스탯 간 크기가 달라서 비율로 비교해야 공평하다.
-const MED = { hap: 106, exp: 124, abi: 36, hp: 44 };
-const SCORE_HIGH = 2740;
-const SCORE_LOW = 2310;
+const MED = { hap: 125, exp: 150, abi: 41, hp: 49 };
+const SCORE_HIGH = 3310;
+const SCORE_LOW = 2670;
 
 export function buildContext(state, score) {
   const ratios = {
@@ -36,25 +36,25 @@ export const ENDINGS = [
     test: (s, c) => c.tag('hunt') >= 5 && c.dom === 'abi' },
   { id: 'gourmet', emoji: '🍽', name: '골목의 미식가', desc: '이 동네에서 맛있는 것이 어디 있는지, 너만큼 아는 고양이는 없었다.',
     hint: '먹을 것에 얽힌 일을 아주 많이 겪기',
-    test: (s, c) => c.tag('food') >= 9 },
+    test: (s, c) => c.tag('food') >= 10 },
   { id: 'humanfriend', emoji: '🫂', name: '사람의 친구', desc: '사람을 겁내지 않았고, 사람도 너를 겁내지 않았다.',
     hint: '사람과 얽힌 일을 아주 많이 겪고, 행복을 평균 이상으로 지키기',
     test: (s, c) => c.tag('human') >= 12 && c.ratios.hap >= 1 },
   { id: 'clanlord', emoji: '👑', name: '골목 고양이들의 왕', desc: '싸움으로 얻은 자리가 아니었다. 다들 그저 너를 따랐다.',
     hint: '다른 고양이와 얽힌 일을 아주 많이 겪고, 높은 점수로 완주하기',
-    test: (s, c) => c.tag('cat') >= 9 && c.tier === 'high' },
+    test: (s, c) => c.tag('cat') >= 7 && c.tier === 'high' },
   { id: 'mourner', emoji: '💔', name: '많은 이별을 겪은 고양이', desc: '곁에 있던 얼굴들을 하나씩 떠나보내고도, 너는 계속 걸었다.',
     hint: '고양이와 얽힌 일을 많이 겪되, 대실패도 그만큼 많이 겪기',
-    test: (s, c) => c.tag('cat') >= 7 && c.terrible >= 8 },
+    test: (s, c) => c.tag('cat') >= 6 && c.terrible >= 6 },
   { id: 'chief', emoji: '🫱', name: '골목의 대장', desc: '네 뒤에는 늘 몇 마리가 따라다녔다.',
     hint: '갈림길에서 늘 곁을 지키는 쪽을 골라, 고양이와 얽힌 일을 최대한 많이 겪기',
-    test: (s, c) => c.tag('cat') >= 9 },
+    test: (s, c) => c.tag('cat') >= 8 },
   { id: 'neighbor', emoji: '😺', name: '다정한 이웃', desc: '누구와도 잘 지냈고, 누구도 너를 미워하지 않았다.',
     hint: '고양이와 얽힌 일을 많이 겪기 — 아기 고양이나 밥그릇 앞에서 나누는 쪽으로',
-    test: (s, c) => c.tag('cat') >= 8 },
+    test: (s, c) => c.tag('cat') >= 7 },
   { id: 'companion', emoji: '🐈', name: '조용한 동행', desc: '말수는 적었지만, 곁을 지킬 줄 아는 고양이였다.',
     hint: '고양이와 얽힌 일을 평균보다 조금 더 겪기',
-    test: (s, c) => c.tag('cat') >= 7 },
+    test: (s, c) => c.tag('cat') >= 6 },
   { id: 'explorer', emoji: '🗺', name: '방랑하는 탐험가', desc: '골목의 끝이 어디인지 확인해본 유일한 고양이였다.',
     hint: '낯선 곳으로 가는 선택을 반복하기',
     test: (s, c) => c.tag('explore') >= 5 },
@@ -62,8 +62,8 @@ export const ENDINGS = [
     hint: '날씨에 시달리는 일을 아주 많이 겪고 살아남기',
     test: (s, c) => c.tag('weather') >= 8 },
   { id: 'ninelives', emoji: '🩹', name: '아홉 목숨', desc: '몇 번이나 끝인 줄 알았지만, 너는 매번 다시 일어났다.',
-    hint: '대실패를 열두 번 넘게 겪고도 끝까지 살아남기',
-    test: (s, c) => c.terrible >= 12 },
+    hint: '대실패를 여덟 번 넘게 겪고도 끝까지 살아남기',
+    test: (s, c) => c.terrible >= 8 },
   { id: 'lucky', emoji: '🍀', name: '타고난 행운아', desc: '무슨 일을 해도 이상하게 잘 풀렸다. 그것도 재능이다.',
     hint: '대성공을 열네 번 넘게 만들기 — 운이 따라야 한다',
     test: (s, c) => c.great >= 14 },
@@ -91,13 +91,13 @@ export const ENDINGS = [
       return Math.max(...v) / Math.max(0.01, Math.min(...v)) < 1.55;
     } },
   { id: 'survivor', emoji: '🌱', name: '그래도 살아남은 고양이', desc: '대단할 건 없었다. 끝까지 버텼다는 것만으로 충분하다.',
-    hint: '점수는 낮지만 대실패를 일곱 번 넘게 겪고도 완주하기',
-    test: (s, c) => c.tier === 'low' && c.terrible >= 7 },
+    hint: '점수는 낮지만 대실패를 다섯 번 넘게 겪고도 완주하기',
+    test: (s, c) => c.tier === 'low' && c.terrible >= 5 },
 
   // --- 가장 두드러진 스탯 × 점수 ---
   { id: 'shadow', emoji: '🥷', name: '그림자 사냥꾼', desc: '아무도 네가 지나간 것을 알아채지 못했다.',
-    hint: '🪶 능력을 가장 높게 키우고, 높은 점수로 완주하기',
-    test: (s, c) => c.dom === 'abi' && c.tier === 'high' },
+    hint: '🪶 능력을 가장 높게 키우고, 높은 점수로 완주하기 (능력을 아주 높게 키워도 된다)',
+    test: (s, c) => c.dom === 'abi' && (c.tier === 'high' || c.ratios.abi >= 1.45) },
   { id: 'swift', emoji: '🐾', name: '재빠른 길고양이', desc: '위험한 것들은 늘 너보다 한 발 느렸다.',
     hint: '🪶 능력을 가장 높게 키우고, 보통 점수로 완주하기',
     test: (s, c) => c.dom === 'abi' && c.tier === 'mid' },
@@ -106,8 +106,8 @@ export const ENDINGS = [
     test: (s, c) => c.dom === 'abi' },
 
   { id: 'sunshine', emoji: '🌻', name: '모두의 햇살', desc: '네가 앉은 자리마다 사람들이 모여들었다.',
-    hint: '😊 행복을 가장 높게 키우고, 높은 점수로 완주하기',
-    test: (s, c) => c.dom === 'hap' && c.tier === 'high' },
+    hint: '😊 행복을 가장 높게 키우고, 높은 점수로 완주하기 (행복을 아주 높게 키워도 된다)',
+    test: (s, c) => c.dom === 'hap' && (c.tier === 'high' || c.ratios.hap >= 1.45) },
   { id: 'smiley', emoji: '😸', name: '웃음 많은 고양이', desc: '별것 아닌 일에도 기분이 좋아지는 재주가 있었다.',
     hint: '😊 행복을 가장 높게 키우고, 보통 점수로 완주하기',
     test: (s, c) => c.dom === 'hap' && c.tier === 'mid' },
@@ -117,8 +117,8 @@ export const ENDINGS = [
 
 
   { id: 'chronicle', emoji: '📜', name: '골목의 산증인', desc: '이 동네에서 일어난 일 중 네가 모르는 것은 없었다.',
-    hint: '✨ 경험치를 가장 높게 키우고, 높은 점수로 완주하기',
-    test: (s, c) => c.dom === 'exp' && c.tier === 'high' },
+    hint: '✨ 경험치를 가장 높게 키우고, 높은 점수로 완주하기 (경험치를 아주 높게 키워도 된다)',
+    test: (s, c) => c.dom === 'exp' && (c.tier === 'high' || c.ratios.exp >= 1.3) },
   { id: 'pathfinder', emoji: '🧭', name: '길을 아는 고양이', desc: '어느 골목으로 가면 무엇이 있는지, 몸이 먼저 기억했다.',
     hint: '✨ 경험치를 가장 높게 키우고, 보통 점수로 완주하기',
     test: (s, c) => c.dom === 'exp' && c.tier === 'mid' },
@@ -127,8 +127,8 @@ export const ENDINGS = [
     test: (s, c) => c.dom === 'exp' },
 
   { id: 'sturdy', emoji: '💪', name: '튼튼한 고양이', desc: '무슨 일을 겪어도 다음 날이면 멀쩡히 걸어 다녔다.',
-    hint: '❤️ 체력을 가장 높게 지키고, 높은 점수로 완주하기',
-    test: (s, c) => c.dom === 'hp' && c.tier === 'high' },
+    hint: '❤️ 체력을 가장 높게 지키고, 높은 점수로 완주하기 (체력을 아주 높게 지켜도 된다)',
+    test: (s, c) => c.dom === 'hp' && (c.tier === 'high' || c.ratios.hp >= 1.45) },
   { id: 'wellfed', emoji: '🍚', name: '배부른 고양이', desc: '굶은 날보다 배부른 날이 많았다. 그거면 충분하다.',
     hint: '❤️ 체력을 가장 높게 지키고, 보통 점수로 완주하기',
     test: (s, c) => c.dom === 'hp' && c.tier === 'mid' },

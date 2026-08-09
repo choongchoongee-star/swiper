@@ -12,8 +12,8 @@ export const STAGES = [
 // 실제 체감 난이도는 여기서 조절한다. 400회 시뮬레이션 기준 생존율 70%.
 const HP_START = 60;
 const HP_MAX = 120;
-const DAMAGE_MUL = 0.72;
-const HEAL_MUL = 1.3;
+const DAMAGE_MUL = 0.74;
+const HEAL_MUL = 1.22;
 const HUNGER_EVERY = 1; // 이 장수마다 체력 1 감소 (판이 50장으로 짧아져 매 장으로 올렸다)
 const FRIEND_TO_HAP = 7; // 카드에 적힌 '동료 1'이 행복 몇 만큼인지
 
@@ -32,6 +32,7 @@ export function createState() {
     highlights: [],    // 대성공/대실패 기록
     rescued: false,
     rescueCause: null,
+    causeDamage: { hunger: 0, sick: 0, injury: 0, cold: 0 }, // 무엇이 체력을 가장 많이 깎았나
     pending: null,     // 아직 보여주지 않은 선택 결과 카드
   };
 }
@@ -74,7 +75,10 @@ export function applyEffect(state, eff) {
 
 // 카드를 넘길 때마다 체력이 1씩 자연 감소한다. 굶주림의 압박.
 export function tickHunger(state) {
-  if (state.index % HUNGER_EVERY === 0) state.hp = Math.max(0, state.hp - 1);
+  if (state.index % HUNGER_EVERY !== 0) return;
+  const before = state.hp;
+  state.hp = Math.max(0, state.hp - 1);
+  if (state.causeDamage) state.causeDamage.hunger += before - state.hp;
 }
 
 export function computeScore(state) {
@@ -85,7 +89,9 @@ export function computeScore(state) {
     state.hp * 1 +
     state.greatCount * 100 +
     state.bonusScore +
-    (state.rescued ? 0 : 500);
+    // 완주 보너스는 실제로 끝까지 갔을 때만 붙인다.
+    // 진행 중에도 더해두면 첫 화면부터 640점으로 보이고, 구조로 끝나는 순간 크게 깎여 보인다.
+    (!state.rescued && state.index >= state.total ? 500 : 0);
   const stageMul = stageOf(state).key === 'legend' ? 1.2 : 1;
   const earlyMul = state.rescued ? 0.7 : 1;
   return Math.round(raw * stageMul * earlyMul);

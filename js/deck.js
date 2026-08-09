@@ -28,14 +28,19 @@ function cycler(pool) {
   };
 }
 
-// 단계별 긍정 비율 (아기·골목의 어른 구간은 조금 더 다정하게)
-function goodRatio(i) {
-  if (i < 25) return 0.6;
-  if (i < 75) return 0.5;
+// 단계별 긍정 비율 (아기·골목의 어른 구간은 조금 더 다정하게).
+// 판 길이에 대한 비율로 봐야 50장짜리와 100장짜리가 같은 흐름이 된다.
+function goodRatio(i, length) {
+  const p = i / Math.max(1, length);
+  if (p < 0.25) return 0.6;
+  if (p < 0.75) return 0.5;
   return 0.6;
 }
 
-export function buildDeck(length = 130) {
+// length: 실제로 만들 카드 수(연장 카드에 대비해 넉넉히 만든다)
+// play:   한 판에서 실제로 넘기게 될 카드 수. 비율 배치는 이쪽을 기준으로 해야
+//         50장짜리 판의 마지막 구간이 제대로 「골목의 어른」 구간이 된다.
+export function buildDeck(length = 130, play = length) {
   const good = cycler(GOOD_CARDS);
   const bad = cycler(BAD_CARDS);
   const deck = [];
@@ -50,7 +55,7 @@ export function buildDeck(length = 130) {
     } else if (badStreak >= 2) {
       card = good.next(lastId); // 세 번 연속 불행은 없다
     } else {
-      card = (Math.random() < goodRatio(i) ? good : bad).next(lastId);
+      card = (Math.random() < goodRatio(i, play) ? good : bad).next(lastId);
     }
 
     badStreak = card.tone === 'bad' ? badStreak + 1 : 0;
@@ -62,8 +67,8 @@ export function buildDeck(length = 130) {
   const inserts = [];
 
   // 선택 분기 카드는 여덟 장에 한 번쯤. 조작에 익숙해지도록 첫 6장에는 넣지 않는다.
-  const count = Math.max(3, Math.round((length - 6) / 8));
-  const span = Math.max(1, Math.floor((length - 8) / count));
+  const count = Math.max(3, Math.round((play - 6) / 8));
+  const span = Math.max(1, Math.floor((play - 8) / count));
   let bag = [];
   for (let i = 0; i < count; i++) {
     if (!bag.length) bag = shuffled(CHOICE_CARDS);
@@ -71,8 +76,8 @@ export function buildDeck(length = 130) {
   }
 
   // 위치는 판 길이에 비례해서 잡는다(50장짜리든 100장짜리든 같은 흐름이 되도록).
-  const at = (f) => Math.round(length * f);
-  const jitter = (f) => Math.floor(Math.random() * Math.max(1, Math.round(length * f)));
+  const at = (f) => Math.round(play * f);
+  const jitter = (f) => Math.floor(Math.random() * Math.max(1, Math.round(play * f)));
   for (const f of [0.2, 0.45, 0.7, 0.9]) {
     if (Math.random() < 0.4) inserts.push({ at: at(f), card: EXTEND_CARD });
   }
@@ -85,5 +90,19 @@ export function buildDeck(length = 130) {
     if (at < deck.length) deck.splice(at, 0, card);
   }
 
+  return unstack(deck);
+}
+
+// 특수·선택 카드를 끼워 넣고 나면 나쁜 카드가 세 장 이어질 수 있다.
+// 세 번째 나쁜 카드를 뒤쪽의 가까운 좋은 카드와 바꿔 흐름을 풀어준다.
+function unstack(deck) {
+  for (let i = 2; i < deck.length; i++) {
+    if (deck[i - 2].tone !== 'bad' || deck[i - 1].tone !== 'bad' || deck[i].tone !== 'bad') continue;
+    for (let j = i + 1; j < Math.min(i + 6, deck.length); j++) {
+      if (deck[j].tone === 'bad') continue;
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+      break;
+    }
+  }
   return deck;
 }

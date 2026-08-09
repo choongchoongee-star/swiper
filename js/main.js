@@ -5,7 +5,7 @@ import { catSVG, probeAssets, MOODS } from './cat.js';
 import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
 import { tagOf, cardById } from './cards.js';
 import { playGreat, playTerrible, isMuted, toggleMute } from './sfx.js';
-import { load, recordEnding, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen } from './storage.js';
+import { load, recordEnding, recordBest, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen } from './storage.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -60,7 +60,7 @@ function renderResume() {
   const btn = document.createElement('button');
   btn.id = 'resume';
   btn.className = 'resume';
-  btn.innerHTML = `🐾 이어서 하기<small>${run.state.index} / ${run.state.total}장까지 살았다</small>`;
+  btn.innerHTML = `🐾 이어서 하기<small>${run.state.total}장 중 ${run.state.index}장을 넘겼다</small>`;
   btn.addEventListener('click', resumeGame);
   $('#start').after(btn);
 }
@@ -136,7 +136,7 @@ function requestedLength() {
 
 function startGame() {
   const total = requestedLength();
-  deck = buildDeck(total + 30);
+  deck = buildDeck(total + 30, total);
   state = createState();
   state.total = total;
   beginRun();
@@ -185,7 +185,9 @@ function persist() {
 }
 
 function renderHud() {
-  els.progress.textContent = `${Math.min(state.index + 1, state.total)} / ${state.total}`;
+  // 선택 결과 카드는 방금 넘긴 그 카드의 결과이므로 번호를 앞당기지 않는다.
+  const shown = state.pending ? state.index : state.index + 1;
+  els.progress.textContent = `${Math.min(shown, state.total)} / ${state.total}`;
   els.score.textContent = computeScore(state).toLocaleString();
   els.stats.innerHTML = [
     ['❤️', state.hp, 'hp'], ['😊', state.hap, 'hap'],
@@ -271,6 +273,22 @@ function renderCard(card) {
     b.addEventListener('click', () => commit(Number(b.dataset.choice))));
 }
 
+// 구조되는 이유는 마지막 한 장이 아니라 그 판을 통틀어 무엇이 가장 몸을 상하게 했는지로 정한다.
+// 마지막 카드만 보면 사고로 끝나는 판이 대부분이라, 굶주림·병·추위 엔딩을 볼 일이 거의 없었다.
+function worstCause(state) {
+  const d = state.causeDamage || {};
+  const keys = Object.keys(d);
+  const total = keys.reduce((a, k) => a + Math.max(0, d[k] || 0), 0);
+  if (!total) return 'hunger';
+  // 가장 큰 것 하나로 못 박으면 한 종류만 계속 나온다. 깎인 양에 비례해 뽑는다.
+  let r = Math.random() * total;
+  for (const k of keys) {
+    r -= Math.max(0, d[k] || 0);
+    if (r <= 0) return k;
+  }
+  return keys[0];
+}
+
 // 같은 카드가 다시 나와도 같은 문장을 반복하지 않는다.
 function pickText(card, tier, t) {
   if (!Array.isArray(t)) return t;
@@ -326,13 +344,19 @@ function commit(choiceIdx = null) {
   }
 
   const delta = applyEffect(state, eff);
+  // 무엇 때문에 체력이 깎였는지 쌓아둔다. 구조될 때 어떤 엔딩이 나올지는 이 누적으로 정한다.
+  if (delta.hp < 0) {
+    const cause = causeOf(card.id);
+    state.causeDamage[cause] = (state.causeDamage[cause] || 0) - delta.hp;
+  }
   tickHunger(state);
-  if (state.cloverLeft > 0) state.cloverLeft--;
+  // 클로버를 주운 장에서 깎으면 약속한 세 장 중 한 장이 그냥 사라진다.
+  if (card.special !== 'clover' && state.cloverLeft > 0) state.cloverLeft--;
 
   state.index++;
   if (state.hp <= 0) {
     state.rescued = true;
-    state.rescueCause = causeOf(card.id);
+    state.rescueCause = worstCause(state);
   }
 
   renderHud();
@@ -377,6 +401,7 @@ function showPending() {
     artFallback: p.baseId, tone: p.tier === 'great' ? 'good' : 'bad',
   };
   renderCard(current);
+  renderHud();          // 결과 카드는 방금 넘긴 그 카드의 번호를 그대로 유지한다
   fanfare(p.tier);
   showResult(p);
 }
@@ -489,7 +514,10 @@ function finish() {
   clearRun();
   const score = computeScore(state);
   const ending = judgeEnding(state, score);
-  const data = recordEnding(ending);
+  const before = recordEnding(ending);
+  const data = { ...before, best: before.best };
+  // 이름을 등록하지 않아도 최고 기록은 남는다. 갱신 여부는 갱신 전 값으로 판단한다.
+  recordBest(score);
   lastRun = { ending, score, cards: state.index };
 
   const highs = state.highlights.slice(-3).reverse()
