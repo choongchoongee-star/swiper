@@ -452,19 +452,23 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
   background: rgba(43, 29, 20, .34);
 }
 .fx.show { opacity: 1; }
+/* 그림과 문구를 한 장의 스티커로 묶는다. 사이가 비면 그 틈으로 뒤 카드가 비쳐 어색하다 */
 .fx-inner {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 16px 22px 14px; border-radius: 30px;
+  border: 6px solid var(--ink); background: var(--paper);
+  box-shadow: 0 10px 0 var(--ink);
   animation: stamp .45s cubic-bezier(.2,1.4,.4,1);
 }
-.fx-art, .fx-cat .cat, .fx-cat .cat-img { width: min(46vw, 190px); height: auto; }
-.fx-label {
-  font-size: clamp(28px, 9vw, 44px); font-weight: 900; letter-spacing: -1px;
-  padding: 6px 22px; border-radius: 999px;
-  border: 5px solid var(--ink); background: var(--paper);
-  box-shadow: 0 7px 0 var(--ink);
+.fx--great .fx-inner { background: #ffeec2; }
+.fx--terrible .fx-inner { background: #ffdcd6; }
+.fx-art, .fx-cat .cat, .fx-cat .cat-img {
+  width: min(42vw, 175px); height: auto; display: block;
 }
-.fx--great .fx-label { background: var(--gold); }
-.fx--terrible .fx-label { background: var(--bad); color: #fff; }
+.fx-label {
+  font-size: clamp(26px, 8vw, 40px); font-weight: 900; letter-spacing: -1px; line-height: 1.15;
+}
+.fx--terrible .fx-label { color: #a8322e; }
 .fx--terrible .fx-inner { animation: stamp-bad .45s ease; }
 @keyframes stamp {
   0% { transform: scale(.2) rotate(-14deg); opacity: 0; }
