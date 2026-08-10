@@ -2,7 +2,7 @@
 // 나중에 전역 랭킹을 붙이더라도 이 모듈만 갈아끼우면 되도록 분리해 둔다.
 
 const KEY = 'swiper.records.v2';
-const RANK_SIZE = 10;
+const RANK_SIZE = 20;
 
 const empty = { best: 0, ranks: [], endings: [], lastName: '', autoIntroSeen: false, dexDoneSeen: false };
 

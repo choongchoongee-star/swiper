@@ -9,7 +9,7 @@
 //    비워두면 지금처럼 기기 안에만 기록이 남는다.
 const DB_URL = 'https://swiper-cat-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-const RANK_SIZE = 10;
+export const RANK_SIZE = 20;  // 명예의 전당에 남는 인원
 const TIMEOUT = 4000;
 
 export function isOn() {

@@ -6,7 +6,7 @@ import { judgeEnding, causeOf, DEX, TYPE_COUNT, ENDINGS, RESCUE_ENDINGS } from '
 import { tagOf, cardById } from './cards.js';
 import { playGreat, playTerrible, isMuted, toggleMute } from './sfx.js';
 import { load, recordEnding, recordBest, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen, markDexDoneSeen } from './storage.js';
-import { isOn as rankOn, fetchTop, pushScore } from './rank.js';
+import { isOn as rankOn, fetchTop, pushScore, RANK_SIZE } from './rank.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -642,18 +642,14 @@ async function renderSubmit(score) {
     box.innerHTML = '<p class="submit-title">명예의 전당을 불러오는 중…</p>';
     top = await fetchTop();
   }
-  // 전역 랭킹을 받아왔으면 그 기준으로, 못 받아왔으면 기기 기록 기준으로 판단한다.
+  // 이름은 언제나 남길 수 있다. 순위권에 드는지는 문구로만 알려준다.
   const qualifies = top
-    ? (top.length < 10 || score > top[top.length - 1].score)
+    ? (top.length < RANK_SIZE || score > top[top.length - 1].score)
     : wouldRank(score);
-  if (!qualifies) {
-    box.innerHTML = rankTable(top || load().ranks, '명예의 전당');
-    return;
-  }
   const last = load().lastName;
   box.innerHTML = `
     <div class="submit-form">
-      <p class="submit-title">🏆 랭킹에 오를 점수다!</p>
+      <p class="submit-title">${qualifies ? '🏆 랭킹에 오를 점수다!' : '🐾 이름을 남겨두자'}</p>
       <div class="submit-row">
         <input id="rank-name" maxlength="8" placeholder="이름" value="${escapeHtml(last)}" autocomplete="off">
         <button id="rank-go" class="btn btn--sm">등록</button>
@@ -676,9 +672,13 @@ async function doSubmit() {
   // 기기 기록은 항상 남긴다(최고 점수·마지막에 쓴 이름). 전역 랭킹은 되면 더 좋고.
   const { data, rank } = submitScore({ ...lastRun, name });
   const online = rankOn() ? await pushScore({ ...lastRun, name }) : null;
-  const place = online?.rank ?? rank;
+  // 서버가 답을 줬다면 그 순위가 진실이다. 순위권 밖(null)일 때 기기 순위로 갈아타면
+  // 「1위로 등록됐다」 같은 거짓말이 된다. 기기 순위는 서버가 아예 실패했을 때만 쓴다.
+  const place = online ? online.rank : rank;
   $('#submit').innerHTML = `
-    <p class="submit-done">${place ? `${place}위로 등록됐다!` : '등록됐다!'}</p>
+    <p class="submit-done">${place
+      ? `${place}위로 등록됐다!`
+      : '아쉽게 순위권 밖 — 그래도 기록은 남았다.'}</p>
     ${rankTable(online?.top || data.ranks, '명예의 전당')}`;
 }
 
