@@ -886,6 +886,9 @@ $('#pause').addEventListener('click', (e) => {
   e.stopPropagation();
   setAuto(false);
   hideResult();
+  // 구조가 확정된 카드에서 나가면 저장이 이미 지워져 그 판이 통째로 사라진다.
+  // 이때는 나가는 대신 엔딩을 보여준다.
+  if (state?.rescued) return finish();
   persist();
   renderTitle();
 });
