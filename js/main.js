@@ -6,6 +6,7 @@ import { judgeEnding, causeOf, DEX, TYPE_COUNT, ENDINGS, RESCUE_ENDINGS } from '
 import { tagOf, cardById } from './cards.js';
 import { playGreat, playTerrible, isMuted, toggleMute } from './sfx.js';
 import { load, recordEnding, recordBest, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen, markDexDoneSeen } from './storage.js';
+import { isOn as rankOn, fetchTop, pushScore } from './rank.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -46,6 +47,12 @@ function renderTitle() {
   $('#best').textContent = data.best ? `내 최고 기록 ${data.best.toLocaleString()}점` : '아직 기록이 없다';
   $('#dex').textContent = `📖 엔딩 도감 ${collected(data).length} / ${TYPE_COUNT}`;
   $('#recent').innerHTML = rankTable(data.ranks, '명예의 전당');
+  // 전역 랭킹은 늦게 와도 되므로 기기 기록을 먼저 그려두고, 도착하면 갈아 끼운다.
+  if (rankOn()) {
+    fetchTop().then((top) => {
+      if (top && !screens.title.hidden) $('#recent').innerHTML = rankTable(top, '명예의 전당');
+    });
+  }
   renderResume();
   $('#title-inner').className = 'title-inner';
   $('#title-inner').style.transform = '';
@@ -628,10 +635,19 @@ function showDexDone() {
 }
 
 // 오락실처럼 이름을 넣어 랭킹에 올린다.
-function renderSubmit(score) {
+async function renderSubmit(score) {
   const box = $('#submit');
-  if (!wouldRank(score)) {
-    box.innerHTML = rankTable(load().ranks, '명예의 전당');
+  let top = null;
+  if (rankOn()) {
+    box.innerHTML = '<p class="submit-title">명예의 전당을 불러오는 중…</p>';
+    top = await fetchTop();
+  }
+  // 전역 랭킹을 받아왔으면 그 기준으로, 못 받아왔으면 기기 기록 기준으로 판단한다.
+  const qualifies = top
+    ? (top.length < 10 || score > top[top.length - 1].score)
+    : wouldRank(score);
+  if (!qualifies) {
+    box.innerHTML = rankTable(top || load().ranks, '명예의 전당');
     return;
   }
   const last = load().lastName;
@@ -653,12 +669,17 @@ function renderSubmit(score) {
   });
 }
 
-function doSubmit() {
+async function doSubmit() {
   const name = $('#rank-name').value.trim();
+  const go = $('#rank-go');
+  if (go) { go.disabled = true; go.textContent = '등록 중'; }
+  // 기기 기록은 항상 남긴다(최고 점수·마지막에 쓴 이름). 전역 랭킹은 되면 더 좋고.
   const { data, rank } = submitScore({ ...lastRun, name });
+  const online = rankOn() ? await pushScore({ ...lastRun, name }) : null;
+  const place = online?.rank ?? rank;
   $('#submit').innerHTML = `
-    <p class="submit-done">${rank}위로 등록됐다!</p>
-    ${rankTable(data.ranks, '명예의 전당')}`;
+    <p class="submit-done">${place ? `${place}위로 등록됐다!` : '등록됐다!'}</p>
+    ${rankTable(online?.top || data.ranks, '명예의 전당')}`;
 }
 
 /* ---------- 공유 ---------- */
