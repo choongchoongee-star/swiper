@@ -147,7 +147,7 @@ function escapeHtml(s) {
 // ?cards=20 으로 짧게 돌려볼 수 있다. 테스트와 시연용.
 function requestedLength() {
   const n = Number(new URLSearchParams(location.search).get('cards'));
-  return Number.isFinite(n) && n >= 3 ? Math.min(n, 300) : 50;
+  return Number.isFinite(n) && n >= 3 ? Math.floor(Math.min(n, 300)) : 50;
 }
 
 function startGame() {
