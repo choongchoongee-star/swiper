@@ -7,7 +7,7 @@
 // ⬇️ Firebase 콘솔에서 만든 Realtime Database 주소를 여기에 붙여넣으면 전역 랭킹이 켜진다.
 //    예: 'https://스와이프캣-default-rtdb.asia-southeast1.firebasedatabase.app'
 //    비워두면 지금처럼 기기 안에만 기록이 남는다.
-const DB_URL = '';
+const DB_URL = 'https://swiper-cat-default-rtdb.asia-southeast1.firebasedatabase.app';
 
 const RANK_SIZE = 10;
 const TIMEOUT = 4000;
