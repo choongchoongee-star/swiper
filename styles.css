@@ -539,3 +539,35 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
 .share-cell.got { opacity: 1; background: #fff4e2; }
 .share-art { width: 82%; height: 82%; object-fit: contain; }
 .share-cell .share-emoji { font-size: 24px; }
+
+/* ---------- 도감 완성 씬 ---------- */
+#dexdone {
+  overflow-y: auto; justify-content: flex-start;
+  padding: 7vh 18px 32px; text-align: center;
+  background:
+    radial-gradient(circle at 30% 12%, rgba(255,215,130,.55), transparent 42%),
+    radial-gradient(circle at 74% 30%, rgba(255,190,120,.4), transparent 40%),
+    var(--tint, #ffe8d6);
+}
+.dexdone-inner { width: min(430px, 94vw); margin: 0 auto; }
+.dexdone-title { font-size: clamp(24px, 7vw, 32px); margin: 12px 0 8px; }
+.dexdone-sub { color: #6b5644; line-height: 1.65; margin: 0 0 14px; }
+/* 단체사진처럼 겹쳐 선 고양이들 */
+.dexdone-crowd { margin: 6px auto 2px; width: min(430px, 94vw); }
+.crowd-row { display: flex; justify-content: center; }
+.crowd-row--0 .crowd-cat { width: 44px; }
+.crowd-row--1 .crowd-cat { width: 54px; margin-top: -26px; }
+.crowd-row--2 .crowd-cat { width: 66px; margin-top: -30px; }
+.crowd-row--3 .crowd-cat { width: 78px; margin-top: -36px; }
+.crowd-row--1, .crowd-row--2, .crowd-row--3 { position: relative; }
+.crowd-cat {
+  display: inline-block; margin: 0 -7px;
+  opacity: 0; animation: crowdpop .4s cubic-bezier(.2, 1.5, .4, 1) forwards;
+}
+.crowd-art { width: 100%; height: auto; display: block;
+  filter: drop-shadow(0 3px 0 rgba(43,29,20,.15)); }
+.crowd-emoji { font-size: 30px; display: block; text-align: center; }
+@keyframes crowdpop {
+  from { opacity: 0; translate: 0 18px; scale: .4; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}

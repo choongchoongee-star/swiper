@@ -4,7 +4,7 @@
 const KEY = 'swiper.records.v2';
 const RANK_SIZE = 10;
 
-const empty = { best: 0, ranks: [], endings: [], lastName: '', autoIntroSeen: false };
+const empty = { best: 0, ranks: [], endings: [], lastName: '', autoIntroSeen: false, dexDoneSeen: false };
 
 export function load() {
   try {
@@ -96,6 +96,12 @@ export function clearRun() {
   } catch {
     /* 지우지 못해도 다음 시작에서 덮어쓴다. */
   }
+}
+
+export function markDexDoneSeen() {
+  const data = load();
+  data.dexDoneSeen = true;
+  save(data);
 }
 
 export function markAutoIntroSeen() {

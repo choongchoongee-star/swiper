@@ -5,11 +5,11 @@ import { catSVG, probeAssets, MOODS } from './cat.js';
 import { judgeEnding, causeOf, DEX, TYPE_COUNT, ENDINGS, RESCUE_ENDINGS } from './endings.js';
 import { tagOf, cardById } from './cards.js';
 import { playGreat, playTerrible, isMuted, toggleMute } from './sfx.js';
-import { load, recordEnding, recordBest, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen } from './storage.js';
+import { load, recordEnding, recordBest, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen, markDexDoneSeen } from './storage.js';
 
 const $ = (sel) => document.querySelector(sel);
 
-const screens = { title: $('#title'), game: $('#game'), ending: $('#ending'), dexview: $('#dexview'), shareview: $('#shareview') };
+const screens = { title: $('#title'), game: $('#game'), ending: $('#ending'), dexview: $('#dexview'), shareview: $('#shareview'), dexdone: $('#dexdone') };
 const els = {
   progress: $('#progress'), score: $('#score'), stats: $('#stats'),
   card: $('#card'), stage: $('#stage-banner'), result: $('#result'),
@@ -587,6 +587,37 @@ function finish() {
   renderSubmit(score);
   show('ending');
   hideResult();
+
+  // 마지막 칸이 채워진 바로 그 순간, 한 번만 축하 씬을 띄운다.
+  const now = load();
+  if (collected(now).length >= TYPE_COUNT && !now.dexDoneSeen) {
+    markDexDoneSeen();
+    setTimeout(showDexDone, 900);
+  }
+}
+
+// 도감 완성 축하 씬. 서른한 마리가 단체사진처럼 바글바글 모여 인사한다.
+function showDexDone() {
+  // 뒷줄부터 앞줄로, 뒤로 갈수록 작게 — 줄마다 좌우로 조금씩 어긋나게 세운다.
+  // 배경까지 그려진 네모 판 그림은 앞줄에 서면 튀므로 맨 뒷줄로 보낸다.
+  const BOXY = new Set(['pathfinder', 'learner', 'homebody']);
+  const lineup = [...DEX.filter((e) => BOXY.has(e.id)), ...DEX.filter((e) => !BOXY.has(e.id))];
+  const rows = [[0, 9], [9, 17], [17, 24], [24, 31]]; // 뒷줄 9 · 8 · 7 · 7
+  const html = rows.map(([from, to], r) => {
+    const cats = lineup.slice(from, to).map((e, i) => {
+      const idx = from + i;
+      const jitter = ((idx * 37) % 11) - 5;             // -5 ~ +5px, 판마다 같게
+      return `<span class="crowd-cat" style="animation-delay:${idx * 70}ms; transform: translateY(${jitter}px)" title="${e.name}">
+        ${endingArt(e, 'crowd-art')}
+      </span>`;
+    }).join('');
+    return `<div class="crowd-row crowd-row--${r}">${cats}</div>`;
+  }).join('');
+  $('#dexdone-crowd').innerHTML = html;
+  wireArtFallback($('#dexdone-crowd'));
+  playGreat();
+  buzz([40, 60, 40, 60, 80]);
+  show('dexdone');
 }
 
 // 오락실처럼 이름을 넣어 랭킹에 올린다.
@@ -882,6 +913,11 @@ $('#dex-share').addEventListener('click', () => {
   const n = collected(load()).length;
   shareLink(dexShareUrl(), `📖 엔딩 도감 ${n} / ${TYPE_COUNT} — 내가 만난 길고양이의 삶들.`);
 });
+$('#dexdone-share').addEventListener('click', () => {
+  shareLink(dexShareUrl(), `📖 엔딩 도감 ${TYPE_COUNT} / ${TYPE_COUNT} 완성 — 골목의 모든 삶을 만났다.`);
+});
+$('#dexdone-close').addEventListener('click', () => { show('ending'); });
+
 $('#share-play').addEventListener('click', () => {
   history.replaceState(null, '', location.pathname); // 공유 파라미터를 떼고 시작한다
   renderTitle();
