@@ -119,16 +119,23 @@ function renderDex() {
   show('dexview');
 }
 
+// 명예의 전당은 남이 서버에 넣은 값을 그린다. 전부 남의 글씨라고 보고 다룬다.
 function rankTable(ranks, title) {
-  if (!ranks.length) return '';
-  const rows = ranks.map((r, i) => `
+  if (!Array.isArray(ranks) || !ranks.length) return '';
+  const rows = ranks.map((r, i) => {
+    const name = escapeHtml(String(r?.name ?? '')).slice(0, 40) || '이름없음';
+    // 이모지 자리에는 글자 몇 개만 허용한다. 태그가 들어와도 그냥 글씨로 보이게 이스케이프한다.
+    const emoji = escapeHtml([...String(r?.emoji ?? '🐾')].slice(0, 2).join(''));
+    const score = Number(r?.score);
+    return `
     <li>
       <span class="rk">${i + 1}</span>
-      <span class="nm">${escapeHtml(r.name)}</span>
-      <span class="en">${r.emoji}${r.code ? ` ${r.code}` : ''}</span>
-      <b>${r.score.toLocaleString()}</b>
-    </li>`).join('');
-  return `<h3>${title}</h3><ul class="ranks">${rows}</ul>`;
+      <span class="nm">${name}</span>
+      <span class="en">${emoji}</span>
+      <b>${Number.isFinite(score) ? score.toLocaleString() : 0}</b>
+    </li>`;
+  }).join('');
+  return `<h3>${escapeHtml(title)}</h3><ul class="ranks">${rows}</ul>`;
 }
 
 function escapeHtml(s) {

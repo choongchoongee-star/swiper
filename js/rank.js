@@ -44,10 +44,12 @@ export async function fetchTop() {
 // 점수 등록. 성공하면 등록된 순위(1부터), 실패하면 null.
 export async function pushScore({ name, score, ending, cards }) {
   if (!DB_URL) return null;
+  // 서버 규칙이 숫자만 받으므로 NaN·무한대가 그대로 나가면 등록 자체가 조용히 실패한다.
+  const num = (v) => (Number.isFinite(Number(v)) ? Math.max(0, Math.round(Number(v))) : 0);
   const entry = {
-    name: String(name).slice(0, 8) || '이름없음',
-    score: Math.max(0, Math.round(score)),
-    cards: Math.max(0, Math.round(cards || 0)),
+    name: String(name).trim().slice(0, 8) || '이름없음',
+    score: num(score),
+    cards: num(cards),
     ending: ending?.name || '',
     emoji: ending?.emoji || '🐾',
     at: Date.now(),
