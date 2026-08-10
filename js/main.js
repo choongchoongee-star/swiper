@@ -556,7 +556,14 @@ function finish() {
   setAuto(false);
   clearRun();
   const score = computeScore(state);
-  const ending = judgeEnding(state, score);
+  let ending = judgeEnding(state, score);
+  // 히든 자비 규칙: 도감이 30/31이면, 완주하는 순간 남은 한 종이 확정으로 나온다.
+  // 마지막 한 칸을 확률에 맡기는 건 너무 가혹하다. 화면에는 알리지 않는다.
+  if (!state.rescued) {
+    const have = new Set(load().endings);
+    const missing = DEX.filter((e) => !have.has(e.id));
+    if (missing.length === 1) ending = missing[0];
+  }
   const before = recordEnding(ending);
   const data = { ...before, best: before.best };
   // 이름을 등록하지 않아도 최고 기록은 남는다. 갱신 여부는 갱신 전 값으로 판단한다.
