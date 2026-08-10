@@ -512,3 +512,30 @@ h3 { font-size: 12px; opacity: .5; margin: 0 0 6px; letter-spacing: 1px; }
 .high--great { border-color: var(--gold); }
 .high--terrible { border-color: var(--bad); }
 .ending-actions { display: flex; gap: 10px; padding-bottom: 24px; }
+
+/* ---------- 공유 화면 ---------- */
+#shareview {
+  overflow-y: auto; justify-content: flex-start;
+  padding: 8vh 18px 32px; text-align: center;
+}
+#share-body { width: min(420px, 92vw); margin: 0 auto; }
+.share-from {
+  display: inline-block; font-size: 13px; font-weight: 800;
+  padding: 5px 14px; border-radius: 999px;
+  border: 2.5px solid var(--ink); background: var(--paper);
+  margin-bottom: 16px;
+}
+#share-play { margin-top: 22px; }
+.share-grid {
+  list-style: none; padding: 0; margin: 14px auto 10px;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+  width: min(360px, 88vw);
+}
+.share-cell {
+  aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
+  border: 2.5px solid var(--ink); border-radius: 12px;
+  background: var(--paper); font-size: 20px; opacity: .45;
+}
+.share-cell.got { opacity: 1; background: #fff4e2; }
+.share-art { width: 82%; height: 82%; object-fit: contain; }
+.share-cell .share-emoji { font-size: 24px; }

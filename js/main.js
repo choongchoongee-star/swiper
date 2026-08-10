@@ -2,14 +2,14 @@ import { buildDeck } from './deck.js';
 import { createState, stageOf, lockStage, applyEffect, tickHunger, computeScore } from './state.js';
 import { roll, rollExtreme, TIER_LABEL } from './resolve.js';
 import { catSVG, probeAssets, MOODS } from './cat.js';
-import { judgeEnding, causeOf, DEX, TYPE_COUNT } from './endings.js';
+import { judgeEnding, causeOf, DEX, TYPE_COUNT, ENDINGS, RESCUE_ENDINGS } from './endings.js';
 import { tagOf, cardById } from './cards.js';
 import { playGreat, playTerrible, isMuted, toggleMute } from './sfx.js';
 import { load, recordEnding, recordBest, submitScore, wouldRank, saveRun, loadRun, clearRun, markAutoIntroSeen } from './storage.js';
 
 const $ = (sel) => document.querySelector(sel);
 
-const screens = { title: $('#title'), game: $('#game'), ending: $('#ending'), dexview: $('#dexview') };
+const screens = { title: $('#title'), game: $('#game'), ending: $('#ending'), dexview: $('#dexview'), shareview: $('#shareview') };
 const els = {
   progress: $('#progress'), score: $('#score'), stats: $('#stats'),
   card: $('#card'), stage: $('#stage-banner'), result: $('#result'),
@@ -623,6 +623,82 @@ function doSubmit() {
     ${rankTable(data.ranks, '명예의 전당')}`;
 }
 
+/* ---------- 공유 ---------- */
+// 서버가 없으므로 결과를 주소에 담는다. 링크를 연 사람에게는 전용 화면을 그려준다.
+//   ?s=e.<엔딩id>.<점수36진수>.<장수36진수>   — 한 판의 결과
+//   ?s=d.<도감비트마스크36진수>              — 엔딩 도감 진행도
+
+const ALL_ENDINGS = [...ENDINGS, ...Object.values(RESCUE_ENDINGS)];
+
+function shareUrl(payload) {
+  return `${location.origin}${location.pathname}?s=${payload}`;
+}
+
+function endingShareUrl() {
+  const { ending, score, cards } = lastRun;
+  return shareUrl(`e.${ending.id}.${score.toString(36)}.${cards.toString(36)}`);
+}
+
+function dexShareUrl() {
+  const have = new Set(load().endings);
+  let mask = 0n;
+  DEX.forEach((e, i) => { if (have.has(e.id)) mask |= 1n << BigInt(i); });
+  return shareUrl(`d.${mask.toString(36)}`);
+}
+
+// 기기의 공유 시트를 먼저 쓰고, 안 되면 클립보드에 복사한다.
+async function shareLink(url, text) {
+  try {
+    if (navigator.share) return await navigator.share({ title: '스와이프 캣', text, url });
+  } catch { /* 사용자가 공유 시트를 닫음 */ }
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('<b>🔗 링크를 복사했다</b><p>붙여넣어 공유해보자.</p>', 2600);
+  } catch {
+    showToast(`<b>🔗 이 링크를 복사해 공유하자</b><p style="word-break:break-all">${url}</p>`, 6000);
+  }
+}
+
+function parseShare() {
+  const raw = new URLSearchParams(location.search).get('s');
+  if (!raw) return null;
+  const [kind, ...rest] = raw.split('.');
+  if (kind === 'e' && rest.length >= 2) {
+    const ending = ALL_ENDINGS.find((e) => e.id === rest[0]);
+    if (!ending) return null;
+    return { kind, ending, score: parseInt(rest[1], 36) || 0, cards: parseInt(rest[2], 36) || 0 };
+  }
+  if (kind === 'd' && rest.length >= 1) {
+    try { return { kind, mask: BigInt(parseInt(rest[0], 36) || 0) }; } catch { return null; }
+  }
+  return null;
+}
+
+function renderShareView(shared) {
+  if (shared.kind === 'e') {
+    const e = shared.ending;
+    $('#share-body').innerHTML = `
+      <p class="share-from">어느 길고양이의 일생이 도착했다</p>
+      <div class="ending-cat">${endingArt(e, 'ending-art')}</div>
+      <div class="ending-name">${e.emoji} ${e.name}</div>
+      <p class="ending-desc">${e.desc}</p>
+      <div class="ending-score">${shared.score.toLocaleString()}<small>점</small></div>
+      <p class="ending-meta">${shared.cards ? `${shared.cards}장의 인생` : ''}</p>`;
+  } else {
+    const got = DEX.filter((_, i) => (shared.mask >> BigInt(i)) & 1n);
+    const cells = DEX.map((e, i) => ((shared.mask >> BigInt(i)) & 1n)
+      ? `<li class="share-cell got" title="${e.name}">${endingArt(e, 'share-art')}</li>`
+      : '<li class="share-cell">❔</li>').join('');
+    $('#share-body').innerHTML = `
+      <p class="share-from">어느 골목의 엔딩 도감이 도착했다</p>
+      <div class="ending-name">📖 엔딩 도감 ${got.length} / ${TYPE_COUNT}</div>
+      <ul class="share-grid">${cells}</ul>
+      <p class="ending-desc">${got.length >= TYPE_COUNT ? '모든 삶을 만나봤다. 골목의 산증인이다.' : '아직 만나지 못한 삶이 남아 있다.'}</p>`;
+  }
+  wireArtFallback($('#share-body'));
+  show('shareview');
+}
+
 /* ---------- 자동 넘기기 ---------- */
 // 한 번이라도 끝까지 가본 사람에게만 열린다. 두 번째 판부터 쓸 수 있는 편의 기능.
 function autoUnlocked() {
@@ -797,4 +873,22 @@ $('#dex-back').addEventListener('click', renderTitle);
 $('#retry').addEventListener('click', startGame);
 $('#to-title').addEventListener('click', renderTitle);
 bindSwipe($('#game'));
-probeAssets().then(renderTitle);
+$('#share-ending').addEventListener('click', () => {
+  if (!lastRun) return;
+  const { ending, score } = lastRun;
+  shareLink(endingShareUrl(), `${ending.emoji} ${ending.name} — ${score.toLocaleString()}점. 내 길고양이의 일생.`);
+});
+$('#dex-share').addEventListener('click', () => {
+  const n = collected(load()).length;
+  shareLink(dexShareUrl(), `📖 엔딩 도감 ${n} / ${TYPE_COUNT} — 내가 만난 길고양이의 삶들.`);
+});
+$('#share-play').addEventListener('click', () => {
+  history.replaceState(null, '', location.pathname); // 공유 파라미터를 떼고 시작한다
+  renderTitle();
+});
+
+probeAssets().then(() => {
+  const shared = parseShare();
+  if (shared) renderShareView(shared);
+  else renderTitle();
+});

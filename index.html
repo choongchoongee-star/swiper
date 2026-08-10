@@ -34,7 +34,10 @@
   <h2 class="dex-title">엔딩 도감</h2>
   <p id="dex-count" class="dex-count"></p>
   <ul id="dex-list" class="dex-list"></ul>
-  <button id="dex-back" class="btn btn--ghost">돌아가기</button>
+  <div class="ending-actions">
+    <button id="dex-share" class="btn btn--ghost">🔗 도감 공유하기</button>
+    <button id="dex-back" class="btn btn--ghost">돌아가기</button>
+  </div>
 </section>
 
 <!-- 게임 -->
@@ -75,8 +78,15 @@
   <div id="submit"></div>
   <div class="ending-actions">
     <button id="retry" class="btn">다시 태어나기</button>
+    <button id="share-ending" class="btn btn--ghost">🔗 공유하기</button>
     <button id="to-title" class="btn btn--ghost">처음으로</button>
   </div>
+</section>
+
+<!-- 공유된 링크로 들어온 사람에게 보여주는 화면 -->
+<section id="shareview" class="screen" hidden>
+  <div id="share-body"></div>
+  <button id="share-play" class="btn">🐾 나도 한 판 살아보기</button>
 </section>
 
 <script type="module" src="js/main.js"></script>
